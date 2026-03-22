@@ -25,18 +25,20 @@ services:
     depends_on:
       - app
 
-  db:
-    image: postgres:15-alpine
-    container_name: finance-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${DB_DATABASE:-finance}
-      POSTGRES_USER: ${DB_USERNAME:-db_user}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-db_password}
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    networks:
-      - app-network
+#   db:
+#     image: postgres:15-alpine
+#     container_name: finance-db
+#     restart: unless-stopped
+#     environment:
+#       POSTGRES_DB: ${DB_DATABASE:-finance}
+#       POSTGRES_USER: ${DB_USERNAME:-db_user}
+#       POSTGRES_PASSWORD: ${DB_PASSWORD:-db_password}
+#     volumes:
+#       - db-data:/var/lib/postgresql/data
+#     networks:
+#       - app-network
+#     ports:
+#       - "5435:5432"
 
 networks:
   app-network:
