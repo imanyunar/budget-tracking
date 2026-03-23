@@ -263,10 +263,10 @@
 
     <!-- Bottom Row -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Portfolios -->
+        <!-- Wallets -->
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-base font-bold text-slate-900">Your Portfolios</h3>
+                <h3 class="text-base font-bold text-slate-900">Your Wallets</h3>
                 <a href="{{ route('wallets.index') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">View All</a>
             </div>
             <div class="flex-1 flex flex-col gap-3">
@@ -320,7 +320,39 @@
                 </form>
             </div>
             
-            <div class="overflow-x-auto">
+            <!-- Mobile View (Cards) -->
+            <div class="block md:hidden divide-y divide-slate-100">
+                @if($recentTransactions->isEmpty())
+                    <div class="p-6 text-center text-slate-500 text-sm font-medium">No recent transactions.</div>
+                @else
+                    @foreach($recentTransactions as $tx)
+                    <div class="p-4 hover:bg-slate-50 transition-colors">
+                        <div class="flex justify-between items-start gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border {{ $tx->type === 'income' ? 'bg-emerald-50 border-emerald-100' : 'bg-rose-50 border-rose-100' }}">
+                                    <x-icon name="{{ $tx->type === 'income' ? 'arrow-down-left' : 'arrow-up-right' }}" class="w-5 h-5 {{ $tx->type === 'income' ? 'text-emerald-600' : 'text-rose-600' }}" />
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-slate-800">{{ $tx->description }}</p>
+                                    <div class="flex items-center gap-1.5 mt-0.5">
+                                        <span class="w-1.5 h-1.5 rounded-full" style="background-color: {{ $tx->category->color ?? '#cbd5e1' }}"></span>
+                                        <span class="text-xs font-medium text-slate-500">{{ $tx->category->name ?? 'Uncategorized' }} &bull; {{ $tx->date->format('d M') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-black text-sm {{ $tx->type === 'income' ? 'text-emerald-600' : 'text-rose-600' }}">
+                                    {{ $tx->type === 'income' ? '+' : '-' }}{{ number_format($tx->amount, 0, ',', '.') }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                @endif
+            </div>
+
+            <!-- Desktop View (Table) -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50/50">

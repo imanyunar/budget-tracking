@@ -19,7 +19,7 @@
 <body class="bg-slate-50 min-h-screen selection:bg-indigo-500 selection:text-white flex text-slate-900 antialiased overflow-hidden">
     
     <!-- Left: Branding Panel -->
-    <div class="hidden lg:flex flex-col flex-1 w-full bg-indigo-900 relative overflow-hidden text-white pt-12 pb-16 px-16 xl:px-24">
+    <div class="hidden lg:flex flex-col flex-1 w-full bg-indigo-900 relative overflow-hidden text-white pt-12 pb-16 px-16 xl:px-24 animate-fade-in-up" style="animation-duration: 0.7s;">
         <!-- Abstract Decoration -->
         <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
         <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-indigo-500/20 to-blue-500/20 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4"></div>
@@ -108,7 +108,7 @@
     </div>
 
     <!-- Right: Login Form -->
-    <div class="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-16 xl:px-24 w-full max-w-[600px] mx-auto overflow-y-auto">
+    <div class="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-16 xl:px-24 w-full max-w-[600px] mx-auto overflow-y-auto animate-fade-in-up">
         
         <!-- Mobile Logo -->
         <div class="lg:hidden flex items-center gap-3 mb-10 mx-auto">
@@ -187,7 +187,7 @@
 
                     </div>
                     <input type="email" name="email" required value="{{ old('email') }}" 
-                           placeholder="demo@example.com"
+                           placeholder="you@example.com"
                            class="block w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none" 
                            autocomplete="email">
                 </div>
@@ -253,13 +253,7 @@
             </button>
         </form>
 
-        <div class="mt-10 pt-6 border-t border-slate-200">
-            <div class="bg-indigo-50 border border-indigo-100/50 rounded-xl p-4 text-center">
-                <p class="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-1">Demo Credentials</p>
-                <p class="text-sm font-medium text-slate-600">Email: <span class="font-bold text-indigo-900">demo@example.com</span></p>
-                <p class="text-sm font-medium text-slate-600">Password: <span class="font-bold text-indigo-900">password</span></p>
-            </div>
-        </div>
+
         
     </div>
 

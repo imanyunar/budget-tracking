@@ -124,8 +124,57 @@
             </div>
         </form>
 
-        <!-- Table -->
-        <div class="overflow-x-auto">
+        <!-- Mobile View (Cards) -->
+        <div class="block md:hidden divide-y divide-slate-100">
+            @if($transactions->isEmpty())
+                <div class="p-8 text-center text-slate-500 text-sm font-medium">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                        <x-icon name="circle-off" class="w-6 h-6" />
+                    </div>
+                    <p>No transactions found.</p>
+                </div>
+            @else
+                @foreach($transactions as $tx)
+                <div class="p-4 flex flex-col gap-3 hover:bg-slate-50 transition-colors">
+                    <div class="flex justify-between items-start gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border {{ $tx->type === 'income' ? 'bg-emerald-50 border-emerald-100' : 'bg-rose-50 border-rose-100' }}">
+                                <x-icon name="{{ $tx->type === 'income' ? 'arrow-down-left' : 'arrow-up-right' }}" class="w-5 h-5 {{ $tx->type === 'income' ? 'text-emerald-600' : 'text-rose-600' }}" />
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">{{ $tx->description }}</p>
+                                <div class="flex items-center gap-1 mt-0.5 text-[10px] font-medium text-slate-500">
+                                    <span>{{ $tx->date->format('M d, Y') }}</span>
+                                    <span>&bull;</span>
+                                    <span class="flex items-center gap-1"><x-icon name="{{ $tx->portfolio->icon ?? 'wallet' }}" class="w-3 h-3" /> {{ $tx->portfolio->name }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-black text-sm {{ $tx->type === 'income' ? 'text-emerald-600' : 'text-rose-600' }}">
+                                {{ $tx->type === 'income' ? '+' : '-' }}{{ number_format($tx->amount, 0, ',', '.') }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center mt-1 pt-3 border-t border-slate-50">
+                        <span class="inline-flex px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider {{ $tx->type === 'income' ? 'bg-emerald-100 text-emerald-700' : 'bg-indigo-100 text-indigo-700' }}">
+                            {{ $tx->type === 'income' ? 'Received' : 'Paid' }}
+                        </span>
+                        <form action="{{ route('transactions.destroy', $tx->id) }}" method="POST" onsubmit="return confirm('Delete this record?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Delete">
+                                <x-icon name="trash-2" class="w-4 h-4" />
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                @endforeach
+            @endif
+        </div>
+
+        <!-- Desktop View (Table) -->
+        <div class="hidden md:block overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-white">

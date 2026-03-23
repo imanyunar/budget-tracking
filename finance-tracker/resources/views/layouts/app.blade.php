@@ -182,46 +182,29 @@
         @endauth
 
         <!-- Page Content -->
-        <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto overflow-x-hidden">
+        <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto overflow-x-hidden animate-fade-in-up">
             
             <!-- Global Alerts -->
             @if(session('success'))
             <div id="flash-success" class="mb-6 flex items-center gap-3 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl">
                 <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
-                    <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-4 h-4 text-emerald-600"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M20 6 9 17l-5-5" />
-</svg>
-
+                    <x-icon name="check" class="w-4 h-4 text-emerald-600" />
                 </div>
                 <p class="text-sm font-semibold text-emerald-800 flex-1">{{ session('success') }}</p>
                 <button onclick="document.getElementById('flash-success').remove()" class="p-1 text-emerald-600 hover:bg-emerald-100 rounded-lg">
-                    <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-4 h-4"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M18 6 6 18" />
-  <path d="m6 6 12 12" />
-</svg>
+                    <x-icon name="x" class="w-4 h-4" />
+                </button>
+            </div>
+            @endif
 
+            @if(session('warning'))
+            <div id="flash-warning" class="mb-6 flex items-center gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl shadow-sm">
+                <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+                    <x-icon name="alert-triangle" class="w-4 h-4 text-amber-600" />
+                </div>
+                <p class="text-sm font-semibold text-amber-800 flex-1">{{ session('warning') }}</p>
+                <button onclick="document.getElementById('flash-warning').remove()" class="p-1 text-amber-600 hover:bg-amber-100 rounded-lg">
+                    <x-icon name="x" class="w-4 h-4" />
                 </button>
             </div>
             @endif

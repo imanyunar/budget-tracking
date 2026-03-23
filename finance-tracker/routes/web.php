@@ -31,6 +31,9 @@ Route::middleware('auth')->group(function () {
     // Wallets / Portfolios
     Route::get('/wallets', [DashboardController::class, 'wallets'])->name('wallets.index');
     Route::post('/wallets', [DashboardController::class, 'storeWallet'])->name('wallets.store');
+    Route::get('/wallets/{portfolio}', [DashboardController::class, 'showWallet'])->name('wallets.show');
+    Route::put('/wallets/{portfolio}', [DashboardController::class, 'updateWallet'])->name('wallets.update');
+    Route::delete('/wallets/{portfolio}', [DashboardController::class, 'destroyWallet'])->name('wallets.destroy');
 
     // Budgets
     Route::get('/budgets', [DashboardController::class, 'budgets'])->name('budgets.index');
@@ -38,8 +41,13 @@ Route::middleware('auth')->group(function () {
 
     // Investments
     Route::get('/investments', [DashboardController::class, 'investments'])->name('investments.index');
+    Route::post('/investments', [DashboardController::class, 'storeInvestment'])->name('investments.store');
+    Route::post('/investments/{investment}/sell', [DashboardController::class, 'sellInvestment'])->name('investments.sell');
+    Route::put('/investments/{investment}', [DashboardController::class, 'updateInvestment'])->name('investments.update');
+    Route::delete('/investments/{investment}', [DashboardController::class, 'destroyInvestment'])->name('investments.destroy');
 
     // Settings
     Route::get('/settings', [DashboardController::class, 'settings'])->name('settings.index');
+    Route::post('/settings', [DashboardController::class, 'updateSettings'])->name('settings.update');
     Route::post('/settings/clear', [DashboardController::class, 'clearAllData'])->name('settings.clear');
 });
