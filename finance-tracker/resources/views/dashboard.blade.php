@@ -17,11 +17,42 @@
         </div>
         <div class="flex items-center gap-3 w-full sm:w-auto">
             <a href="{{ route('transactions.export') }}" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm">
-                <i data-lucide="download" class="w-4 h-4"></i>
+                <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15V3" />
+  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+  <path d="m7 10 5 5 5-5" />
+</svg>
+
                 Export
             </a>
             <button onclick="openModal()" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-bold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
-                <i data-lucide="plus" class="w-4 h-4"></i>
+                <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="M12 5v14" />
+</svg>
+
                 New Transaction
             </button>
         </div>
@@ -42,8 +73,7 @@
             <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 
                     {{ $alert['type'] === 'danger' ? 'bg-rose-100' : ($alert['type'] === 'warning' ? 'bg-orange-100' : 'bg-blue-100') }}">
-                    <i data-lucide="{{ $alert['icon'] }}" class="w-5 h-5 
-                        {{ $alert['type'] === 'danger' ? 'text-rose-600' : ($alert['type'] === 'warning' ? 'text-orange-600' : 'text-blue-600') }}"></i>
+                    <x-icon name="{{ $alert['icon'] }}" class="w-5 h-5 {{ $alert['type'] === 'danger' ? 'text-rose-600' : ($alert['type'] === 'warning' ? 'text-orange-600' : 'text-blue-600') }}" />
                 </div>
                 <div>
                     <h4 class="text-sm font-bold">{{ $alert['title'] }}</h4>
@@ -67,7 +97,21 @@
 
         <div class="relative z-10 text-white w-full md:w-auto text-center md:text-left">
             <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3">
-                <i data-lucide="zap" class="w-3 h-3"></i> Weekly Summary
+                <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-3 h-3"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
+</svg>
+ Weekly Summary
             </div>
             <h2 class="text-2xl sm:text-3xl font-black mb-2">Performance This Week</h2>
             <p class="text-indigo-100 text-sm font-medium">
@@ -99,7 +143,22 @@
             <div class="relative z-10">
                 <div class="flex justify-between items-start mb-4">
                     <div class="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center border border-indigo-200">
-                        <i data-lucide="wallet" class="w-6 h-6 text-indigo-600"></i>
+                        <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-6 h-6 text-indigo-600"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" />
+  <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" />
+</svg>
+
                     </div>
                 </div>
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Wealth</p>
@@ -113,7 +172,22 @@
             <div class="relative z-10">
                 <div class="flex justify-between items-start mb-4">
                     <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center border border-emerald-200">
-                        <i data-lucide="arrow-down-left" class="w-6 h-6 text-emerald-600"></i>
+                        <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-6 h-6 text-emerald-600"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M17 7 7 17" />
+  <path d="M17 17H7V7" />
+</svg>
+
                     </div>
                     <span class="px-2.5 py-1 rounded-full text-[10px] font-bold {{ $incomeTrend >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
                         {{ $incomeTrend >= 0 ? '+' : '' }}{{ number_format($incomeTrend, 1) }}%
@@ -130,7 +204,22 @@
             <div class="relative z-10">
                 <div class="flex justify-between items-start mb-4">
                     <div class="w-12 h-12 rounded-xl bg-rose-100 flex items-center justify-center border border-rose-200">
-                        <i data-lucide="arrow-up-right" class="w-6 h-6 text-rose-600"></i>
+                        <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-6 h-6 text-rose-600"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M7 7h10v10" />
+  <path d="M7 17 17 7" />
+</svg>
+
                     </div>
                     <span class="px-2.5 py-1 rounded-full text-[10px] font-bold {{ $expenseTrend <= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
                         {{ $expenseTrend > 0 ? '+' : '' }}{{ number_format($expenseTrend, 1) }}%
@@ -185,7 +274,7 @@
                 <div class="flex items-center justify-between p-3 rounded-xl border border-slate-100 hover:border-slate-200 hover:bg-slate-50 transition-colors">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: {{ $portfolio->color }}15; border: 1px solid {{ $portfolio->color }}30;">
-                            <i data-lucide="{{ $portfolio->icon ?: 'wallet' }}" class="w-5 h-5" style="color: {{ $portfolio->color }}"></i>
+                            <x-icon name="{{ $portfolio->icon ?: 'wallet' }}" class="w-5 h-5" style="color: {{ $portfolio->color }}" />
                         </div>
                         <div>
                             <p class="text-sm font-bold text-slate-800">{{ $portfolio->name }}</p>
@@ -211,7 +300,22 @@
                     <p class="text-xs font-medium text-slate-500">Your latest financial activity</p>
                 </div>
                 <form action="{{ route('transactions.index') }}" method="GET" class="flex gap-2 relative">
-                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                    <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
                     <input type="text" name="search" placeholder="Search..." class="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all w-full sm:w-48">
                 </form>
             </div>
@@ -233,8 +337,7 @@
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border 
                                         {{ $tx->type === 'income' ? 'bg-emerald-50 border-emerald-100' : 'bg-rose-50 border-rose-100' }}">
-                                        <i data-lucide="{{ $tx->type === 'income' ? 'arrow-down-left' : 'arrow-up-right' }}" 
-                                           class="w-5 h-5 {{ $tx->type === 'income' ? 'text-emerald-600' : 'text-rose-600' }}"></i>
+                                        <x-icon name="{{ $tx->type === 'income' ? 'arrow-down-left' : 'arrow-up-right' }}" class="w-5 h-5 {{ $tx->type === 'income' ? 'text-emerald-600' : 'text-rose-600' }}" />
                                     </div>
                                     <div>
                                         <p class="text-sm font-bold text-slate-800">{{ $tx->description }}</p>
@@ -281,7 +384,22 @@
     <!-- Modal Content -->
     <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 relative z-10 shadow-2xl shadow-indigo-500/10 border border-slate-100 transform scale-95 opacity-0 transition-all duration-200" id="txModalContent">
         <button onclick="closeModal()" class="absolute top-6 right-6 p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-colors">
-            <i data-lucide="x" class="w-5 h-5"></i>
+            <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M18 6 6 18" />
+  <path d="m6 6 12 12" />
+</svg>
+
         </button>
 
         <div class="mb-6">

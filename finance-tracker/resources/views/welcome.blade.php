@@ -36,7 +36,24 @@
     <main class="flex-grow flex flex-col items-center justify-center p-8 text-center relative z-10">
         <div class="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-1000">
             <div class="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-widest mb-4">
-                <i data-lucide="sparkles" class="w-3 h-3 mr-2"></i> Next-Gen Asset Management
+                <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-3 h-3 mr-2"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" />
+  <path d="M20 2v4" />
+  <path d="M22 4h-4" />
+  <circle cx="4" cy="20" r="2" />
+</svg>
+ Next-Gen Asset Management
             </div>
             <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-none">
                 Master Your <br> <span class="gradient-text">Capital Flow.</span>
@@ -47,11 +64,43 @@
             <div class="pt-8 flex flex-col md:flex-row gap-4 justify-center">
                 @guest
                 <a href="{{ route('login') }}" class="px-12 py-5 bg-blue-600 hover:bg-blue-500 rounded-2xl text-lg font-black shadow-2xl shadow-blue-500/40 transition-all active:scale-95">
-                    Launch Platform <i data-lucide="arrow-right" class="w-5 h-5 ml-2 inline"></i>
+                    Launch Platform <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5 ml-2 inline"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
                 </a>
                 @else
                 <a href="{{ route('dashboard') }}" class="px-12 py-5 bg-blue-600 hover:bg-blue-500 rounded-2xl text-lg font-black shadow-2xl shadow-blue-500/40 transition-all active:scale-95">
-                    Goto Dashboard <i data-lucide="layout-dashboard" class="w-5 h-5 ml-2 inline"></i>
+                    Goto Dashboard <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5 ml-2 inline"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="7" height="9" x="3" y="3" rx="1" />
+  <rect width="7" height="5" x="14" y="3" rx="1" />
+  <rect width="7" height="9" x="14" y="12" rx="1" />
+  <rect width="7" height="5" x="3" y="16" rx="1" />
+</svg>
+
                 </a>
                 @endguest
             </div>
@@ -60,9 +109,52 @@
         <div class="mt-24 w-full max-w-5xl opacity-50 select-none pointer-events-none">
             <div class="glass-card h-64 border-b-0 rounded-b-none translate-y-8 flex items-center justify-center">
                 <div class="flex space-x-12">
-                    <div class="flex items-center space-x-3"><i data-lucide="pie-chart" class="w-8 h-8 text-blue-500"></i> <span class="font-black text-xl">Analytics</span></div>
-                    <div class="flex items-center space-x-3"><i data-lucide="shield" class="w-8 h-8 text-purple-500"></i> <span class="font-black text-xl">Security</span></div>
-                    <div class="flex items-center space-x-3"><i data-lucide="zap" class="w-8 h-8 text-yellow-500"></i> <span class="font-black text-xl">Real-time</span></div>
+                    <div class="flex items-center space-x-3"><!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-8 h-8 text-blue-500"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z" />
+  <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+</svg>
+ <span class="font-black text-xl">Analytics</span></div>
+                    <div class="flex items-center space-x-3"><!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-8 h-8 text-purple-500"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+</svg>
+ <span class="font-black text-xl">Security</span></div>
+                    <div class="flex items-center space-x-3"><!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-8 h-8 text-yellow-500"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
+</svg>
+ <span class="font-black text-xl">Real-time</span></div>
                 </div>
             </div>
         </div>

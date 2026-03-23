@@ -13,7 +13,22 @@
         </div>
         <div class="flex gap-3 w-full md:w-auto">
             <button onclick="openBudgetModal()" class="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-bold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
-                <i data-lucide="plus" class="w-4 h-4"></i> Set New Budget
+                <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="M12 5v14" />
+</svg>
+ Set New Budget
             </button>
         </div>
     </div>
@@ -26,7 +41,7 @@
             <div class="flex items-center justify-between mb-8">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm" style="background: {{ $budget->category->color }}15; border: 1px solid {{ $budget->category->color }}30">
-                        <i data-lucide="{{ $budget->category->icon }}" class="w-6 h-6" style="color: {{ $budget->category->color }}"></i>
+                        <x-icon name="{{ $budget->category->icon }}" class="w-6 h-6" style="color: {{ $budget->category->color }}" />
                     </div>
                     <div>
                         <h3 class="text-lg font-bold text-slate-800">{{ $budget->category->name }}</h3>
@@ -34,7 +49,23 @@
                     </div>
                 </div>
                 <button class="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-colors">
-                    <i data-lucide="more-horizontal" class="w-5 h-5"></i>
+                    <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="1" />
+  <circle cx="19" cy="12" r="1" />
+  <circle cx="5" cy="12" r="1" />
+</svg>
+
                 </button>
             </div>
 
@@ -88,7 +119,22 @@
     
     <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 relative z-10 shadow-2xl shadow-indigo-500/10 border border-slate-100 transform scale-95 opacity-0 transition-all duration-200" id="budgetModalContent">
         <button onclick="closeBudgetModal()" class="absolute top-6 right-6 p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-colors">
-            <i data-lucide="x" class="w-5 h-5"></i>
+            <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M18 6 6 18" />
+  <path d="m6 6 12 12" />
+</svg>
+
         </button>
 
         <div class="mb-6">

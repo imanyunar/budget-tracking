@@ -17,7 +17,22 @@
         </div>
         <div class="flex gap-3 w-full md:w-auto">
             <button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-bold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
-                <i data-lucide="plus" class="w-4 h-4"></i> Add Platform
+                <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="M12 5v14" />
+</svg>
+ Add Platform
             </button>
         </div>
     </div>
@@ -63,7 +78,22 @@
                     <p class="text-xs text-slate-500 mt-1 font-medium">Real-time performance tracking per entity.</p>
                 </div>
                 <button class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-bold uppercase tracking-wider text-indigo-600 hover:bg-slate-50 transition-colors shadow-sm">
-                    Detailed Ledger <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                    Detailed Ledger <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-3 h-3"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
                 </button>
             </div>
 
@@ -85,7 +115,7 @@
                                 <div class="flex items-center gap-4">
                                     <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border transition-transform group-hover:scale-105" 
                                          style="background: {{ $port->color }}10; border-color: {{ $port->color }}20;">
-                                        <i data-lucide="{{ $port->icon ?: 'trending-up' }}" class="w-6 h-6" style="color: {{ $port->color }}"></i>
+                                        <x-icon name="{{ $port->icon ?: 'trending-up' }}" class="w-6 h-6" style="color: {{ $port->color }}" />
                                     </div>
                                     <div>
                                         <h4 class="text-sm font-bold text-slate-800">{{ $port->name }}</h4>
@@ -101,12 +131,43 @@
                             </td>
                             <td class="px-6 py-5 text-right">
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-100">
-                                    <i data-lucide="trending-up" class="w-3 h-3"></i> {{ number_format(abs($port->roi), 1) }}%
+                                    <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-3 h-3"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M16 7h6v6" />
+  <path d="m22 7-8.5 8.5-5-5L2 17" />
+</svg>
+ {{ number_format(abs($port->roi), 1) }}%
                                 </span>
                             </td>
                             <td class="px-6 py-5 text-right">
                                 <button class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Manage Platform">
-                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                    <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 3h6v6" />
+  <path d="M10 14 21 3" />
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+</svg>
+
                                 </button>
                             </td>
                         </tr>

@@ -14,7 +14,6 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <!-- Icons & Charts -->
-    <script src="https://unpkg.com/lucide@latest"></script>
     @stack('head-scripts')
 
     <style>
@@ -43,13 +42,42 @@
         <div class="h-20 flex items-center px-6 border-b border-slate-100 shrink-0">
             <div class="flex items-center gap-3 w-full">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 shrink-0">
-                    <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+                    <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5 text-white"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
+</svg>
+
                 </div>
                 <span class="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">FinanceTracker</span>
             </div>
             <!-- Mobile Close Btn -->
             <button class="lg:hidden p-2 text-slate-400 hover:bg-slate-100 rounded-lg shrink-0" onclick="toggleSidebar()">
-                <i data-lucide="x" class="w-5 h-5"></i>
+                <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M18 6 6 18" />
+  <path d="m6 6 12 12" />
+</svg>
+
             </button>
         </div>
 
@@ -75,7 +103,7 @@
                           {{ $isActive ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
                     <div class="w-8 h-8 rounded-lg flex items-center justify-center transition-colors 
                                 {{ $isActive ? 'bg-indigo-600 shadow-md text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-700' }}">
-                        <i data-lucide="{{ $item['icon'] }}" class="w-4 h-4"></i>
+                        <x-icon name="{{ $item['icon'] }}" class="w-4 h-4" />
                     </div>
                     <span class="font-semibold {{ $isActive ? 'font-bold' : '' }} text-sm">{{ $item['name'] }}</span>
                 </a>
@@ -95,7 +123,23 @@
                 <form action="{{ route('logout') }}" method="POST" class="shrink-0">
                     @csrf
                     <button type="submit" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors" title="Log Out">
-                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m16 17 5-5-5-5" />
+  <path d="M21 12H9" />
+  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+</svg>
+
                     </button>
                 </form>
             </div>
@@ -111,7 +155,23 @@
         <header class="lg:hidden h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sticky top-0 z-30">
             <div class="flex items-center gap-3">
                 <button onclick="toggleSidebar()" class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
+                    <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 5h16" />
+  <path d="M4 12h16" />
+  <path d="M4 19h16" />
+</svg>
+
                 </button>
                 <span class="text-lg font-bold text-slate-800">FinanceTracker</span>
             </div>
@@ -128,11 +188,40 @@
             @if(session('success'))
             <div id="flash-success" class="mb-6 flex items-center gap-3 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl">
                 <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
-                    <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                    <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4 text-emerald-600"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 6 9 17l-5-5" />
+</svg>
+
                 </div>
                 <p class="text-sm font-semibold text-emerald-800 flex-1">{{ session('success') }}</p>
                 <button onclick="document.getElementById('flash-success').remove()" class="p-1 text-emerald-600 hover:bg-emerald-100 rounded-lg">
-                    <i data-lucide="x" class="w-4 h-4"></i>
+                    <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M18 6 6 18" />
+  <path d="m6 6 12 12" />
+</svg>
+
                 </button>
             </div>
             @endif
@@ -141,11 +230,42 @@
             <div id="flash-error" class="mb-6 bg-rose-50 border border-rose-200 rounded-xl p-4">
                 <div class="flex items-center gap-3 mb-2">
                     <div class="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center shrink-0">
-                        <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600"></i>
+                        <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4 text-rose-600"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="10" />
+  <line x1="12" x2="12" y1="8" y2="12" />
+  <line x1="12" x2="12.01" y1="16" y2="16" />
+</svg>
+
                     </div>
                     <h3 class="text-sm font-bold text-rose-800 flex-1">Please fix the following errors</h3>
                     <button onclick="document.getElementById('flash-error').remove()" class="p-1 text-rose-600 hover:bg-rose-100 rounded-lg">
-                        <i data-lucide="x" class="w-4 h-4"></i>
+                        <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M18 6 6 18" />
+  <path d="m6 6 12 12" />
+</svg>
+
                     </button>
                 </div>
                 <ul class="list-disc list-inside text-sm font-medium text-rose-700 space-y-1 pl-11">
@@ -163,8 +283,6 @@
 
     <script>
         // Init Icons
-        lucide.createIcons();
-
         // Mobile Sidebar Toggle
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');

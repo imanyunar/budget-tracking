@@ -13,7 +13,22 @@
         </div>
         <div class="flex gap-3 w-full md:w-auto">
             <button onclick="openWalletModal()" class="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-bold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
-                <i data-lucide="plus" class="w-4 h-4"></i> Create Wallet
+                <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="M12 5v14" />
+</svg>
+ Create Wallet
             </button>
         </div>
     </div>
@@ -25,12 +40,12 @@
             
             <!-- Decoration -->
             <div class="absolute -right-12 -top-12 opacity-[0.03] scale-150 rotate-12 transition-transform duration-500 group-hover:rotate-0 group-hover:scale-[1.6]">
-                <i data-lucide="{{ $portfolio->icon ?: 'wallet' }}" class="w-48 h-48" style="color: {{ $portfolio->color }}"></i>
+                <x-icon name="{{ $portfolio->icon ?: 'wallet' }}" class="w-48 h-48" style="color: {{ $portfolio->color }}" />
             </div>
             
             <div class="relative z-10 flex items-start justify-between mb-8">
                 <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-colors shadow-sm" style="background: {{ $portfolio->color }}15; border: 1px solid {{ $portfolio->color }}30">
-                    <i data-lucide="{{ $portfolio->icon ?: 'wallet' }}" class="w-7 h-7" style="color: {{ $portfolio->color }}"></i>
+                    <x-icon name="{{ $portfolio->icon ?: 'wallet' }}" class="w-7 h-7" style="color: {{ $portfolio->color }}" />
                 </div>
                 <div class="text-right">
                     <span class="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-100">
@@ -51,12 +66,42 @@
             <div class="relative z-10 mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <div class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-                        <i data-lucide="trending-up" class="w-3 h-3"></i>
+                        <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-3 h-3"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M16 7h6v6" />
+  <path d="m22 7-8.5 8.5-5-5L2 17" />
+</svg>
+
                     </div>
                     <span class="text-xs font-bold text-emerald-600">Healthy</span>
                 </div>
                 <span class="text-xs font-bold text-indigo-600 group-hover:text-indigo-800 transition-colors flex items-center gap-1">
-                    Details <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                    Details <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-3 h-3"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="m12 5 7 7-7 7" />
+</svg>
+
                 </span>
             </div>
         </div>
@@ -65,7 +110,22 @@
         <!-- Quick Add Card -->
         <div onclick="openWalletModal()" class="bg-slate-50 border-2 border-dashed border-slate-300 rounded-2xl p-8 flex flex-col items-center justify-center text-slate-500 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50/50 cursor-pointer transition-all group min-h-[300px]">
             <div class="w-14 h-14 rounded-full border-2 border-current flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <i data-lucide="plus" class="w-6 h-6"></i>
+                <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-6 h-6"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="M12 5v14" />
+</svg>
+
             </div>
             <span class="text-sm font-bold">Add New Storage</span>
         </div>
@@ -78,7 +138,22 @@
     
     <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 relative z-10 shadow-2xl shadow-indigo-500/10 border border-slate-100 transform scale-95 opacity-0 transition-all duration-200" id="walletModalContent">
         <button onclick="closeWalletModal()" class="absolute top-6 right-6 p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-colors">
-            <i data-lucide="x" class="w-5 h-5"></i>
+            <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M18 6 6 18" />
+  <path d="m6 6 12 12" />
+</svg>
+
         </button>
 
         <div class="mb-6">

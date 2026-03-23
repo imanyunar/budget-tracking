@@ -13,7 +13,23 @@
         </div>
         <div class="flex gap-3 w-full md:w-auto">
             <button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-bold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
-                <i data-lucide="save" class="w-4 h-4"></i> Save Config
+                <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
+  <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
+  <path d="M7 3v4a1 1 0 0 0 1 1h7" />
+</svg>
+ Save Config
             </button>
         </div>
     </div>
@@ -26,7 +42,22 @@
                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ Auth::user()->name ?? 'Felix' }}" alt="Profile" class="w-full h-full object-cover">
                 </div>
                 <button class="absolute -bottom-3 -right-3 p-3 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 transition-colors border border-indigo-400">
-                    <i data-lucide="camera" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                    <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4 sm:w-5 sm:h-5"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" />
+  <circle cx="12" cy="13" r="3" />
+</svg>
+
                 </button>
             </div>
             
@@ -52,7 +83,22 @@
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-8">
                 <div class="flex items-center gap-4 border-b border-slate-100 pb-4">
                     <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl border border-indigo-100">
-                        <i data-lucide="user" class="w-5 h-5"></i>
+                        <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+  <circle cx="12" cy="7" r="4" />
+</svg>
+
                     </div>
                     <h3 class="text-lg font-bold text-slate-900">Personal Identity</h3>
                 </div>
@@ -74,7 +120,22 @@
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-8">
                 <div class="flex items-center gap-4 border-b border-slate-100 pb-4">
                     <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100">
-                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+  <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
+</svg>
+
                     </div>
                     <h3 class="text-lg font-bold text-slate-900">Alert Strategy</h3>
                 </div>

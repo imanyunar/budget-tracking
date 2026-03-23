@@ -12,8 +12,6 @@
     
     <!-- Core Assets -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://unpkg.com/lucide@latest"></script>
-
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
@@ -30,7 +28,21 @@
             <!-- Logo -->
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/20">
-                    <i data-lucide="zap" class="w-5 h-5 text-indigo-300"></i>
+                    <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5 text-indigo-300"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
+</svg>
+
                 </div>
                 <span class="text-xl font-extrabold tracking-tight">FinanceTracker</span>
             </div>
@@ -53,7 +65,7 @@
                     ] as $feat)
                     <div class="flex items-start gap-4">
                         <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center backdrop-blur-sm border border-white/10 shrink-0">
-                            <i data-lucide="{{ $feat['icon'] }}" class="w-5 h-5 text-indigo-300"></i>
+                            <x-icon name="{{ $feat['icon'] }}" class="w-5 h-5 text-indigo-300" />
                         </div>
                         <div>
                             <h3 class="font-bold text-white">{{ $feat['title'] }}</h3>
@@ -73,7 +85,21 @@
                 </div>
                 <div>
                     <div class="flex text-amber-400">
-                        @for($i=0; $i<5; $i++) <i data-lucide="star" class="w-3 h-3 fill-current"></i> @endfor
+                        @for($i=0; $i<5; $i++) <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-3 h-3 fill-current"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" />
+</svg>
+ @endfor
                     </div>
                     <p class="text-xs font-bold text-indigo-200 mt-1">Trusted by 10,000+ users</p>
                 </div>
@@ -87,7 +113,21 @@
         <!-- Mobile Logo -->
         <div class="lg:hidden flex items-center gap-3 mb-10 mx-auto">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+                <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5 text-white"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
+</svg>
+
             </div>
             <span class="text-2xl font-black text-slate-900 tracking-tight">FinanceTracker</span>
         </div>
@@ -100,7 +140,23 @@
         @if ($errors->any())
         <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 flex flex-col gap-1">
             <div class="flex items-center gap-2 text-rose-800">
-                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="10" />
+  <line x1="12" x2="12" y1="8" y2="12" />
+  <line x1="12" x2="12.01" y1="16" y2="16" />
+</svg>
+
                 <h3 class="text-sm font-bold">Authentication failed</h3>
             </div>
             <p class="text-sm font-medium text-rose-600 ml-6">{{ $errors->first() }}</p>
@@ -113,7 +169,22 @@
                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 pl-1">Email <span class="text-rose-500">*</span></label>
                 <div class="relative group">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <i data-lucide="mail" class="w-5 h-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
+                        <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+  <rect x="2" y="4" width="20" height="16" rx="2" />
+</svg>
+
                     </div>
                     <input type="email" name="email" required value="{{ old('email') }}" 
                            placeholder="demo@example.com"
@@ -129,14 +200,44 @@
                 </label>
                 <div class="relative group">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <i data-lucide="lock" class="w-5 h-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
+                        <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+</svg>
+
                     </div>
                     <input type="password" name="password" required 
                            placeholder="••••••••" id="pwd"
                            class="block w-full pl-11 pr-12 py-3.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none" 
                            autocomplete="current-password">
                     <button type="button" onclick="togglePwd()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none">
-                        <i data-lucide="eye" class="w-5 h-5" id="eye-icon"></i>
+                        <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+  <circle cx="12" cy="12" r="3" />
+</svg>
+
                     </button>
                 </div>
             </div>
@@ -163,8 +264,6 @@
     </div>
 
     <script>
-        lucide.createIcons();
-
         function togglePwd() {
             const pwd = document.getElementById('pwd');
             const icon = document.getElementById('eye-icon');
@@ -175,8 +274,7 @@
                 pwd.type = 'password';
                 icon.setAttribute('data-lucide', 'eye');
             }
-            lucide.createIcons();
-        }
+            }
     </script>
 </body>
 </html>

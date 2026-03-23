@@ -13,7 +13,22 @@
         </div>
         <div class="flex gap-3 w-full md:w-auto">
             <button onclick="openModal()" class="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-bold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
-                <i data-lucide="plus" class="w-4 h-4"></i> New Entry
+                <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="M12 5v14" />
+</svg>
+ New Entry
             </button>
         </div>
     </div>
@@ -26,7 +41,22 @@
             <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto flex-1">
                 <!-- Search -->
                 <div class="relative w-full sm:w-80">
-                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                    <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m21 21-4.34-4.34" />
+  <circle cx="11" cy="11" r="8" />
+</svg>
+
                     <input type="text" name="search" value="{{ request('search') }}" 
                            placeholder="Search by description..." 
                            class="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all outline-none">
@@ -53,10 +83,43 @@
             <!-- Actions -->
             <div class="flex items-center gap-2 w-full lg:w-auto">
                 <a href="{{ route('transactions.index') }}" class="p-2.5 w-full sm:w-auto flex justify-center bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors text-slate-500" title="Clear Filters">
-                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+  <path d="M21 3v5h-5" />
+  <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+  <path d="M8 16H3v5" />
+</svg>
+
                 </a>
                 <a href="{{ route('transactions.export') }}" class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 transition-colors">
-                    <i data-lucide="download" class="w-4 h-4"></i> Export
+                    <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 15V3" />
+  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+  <path d="m7 10 5 5 5-5" />
+</svg>
+ Export
                 </a>
             </div>
         </form>
@@ -75,14 +138,42 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
-                    @forelse($transactions as $tx)
+                    @if($transactions->isEmpty())
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-slate-500 text-sm font-medium">
+                            <div class="flex flex-col items-center justify-center gap-3">
+                                <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                                    <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-6 h-6"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m13.5 8.5-5 5" />
+  <path d="m8.5 8.5 5 5" />
+  <circle cx="11" cy="11" r="8" />
+  <path d="m21 21-4.3-4.3" />
+</svg>
+
+                                </div>
+                                <p>No transactions found matching your filters.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @else
+                    @foreach($transactions as $tx)
                     <tr class="hover:bg-slate-50 transition-colors group">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border
                                     {{ $tx->type === 'income' ? 'bg-emerald-50 border-emerald-100' : 'bg-rose-50 border-rose-100' }}">
-                                    <i data-lucide="{{ $tx->type === 'income' ? 'arrow-down-left' : 'arrow-up-right' }}" 
-                                       class="w-5 h-5 {{ $tx->type === 'income' ? 'text-emerald-600' : 'text-rose-600' }}"></i>
+                                    <x-icon name="{{ $tx->type === 'income' ? 'arrow-down-left' : 'arrow-up-right' }}" class="w-5 h-5 {{ $tx->type === 'income' ? 'text-emerald-600' : 'text-rose-600' }}" />
                                 </div>
                                 <div>
                                     <p class="text-sm font-bold text-slate-800">{{ $tx->description }}</p>
@@ -101,7 +192,7 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
-                                <i data-lucide="{{ $tx->portfolio->icon ?? 'wallet' }}" class="w-4 h-4 text-slate-400"></i>
+                                <x-icon name="{{ $tx->portfolio->icon ?? 'wallet' }}" class="w-4 h-4 text-slate-400" />
                                 {{ $tx->portfolio->name }}
                             </div>
                         </td>
@@ -118,23 +209,31 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Delete">
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-4 h-4"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M10 11v6" />
+  <path d="M14 11v6" />
+  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+  <path d="M3 6h18" />
+  <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+</svg>
+
                                 </button>
                             </form>
                         </td>
                     </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="px-6 py-12 text-center text-slate-500 text-sm font-medium">
-                            <div class="flex flex-col items-center justify-center gap-3">
-                                <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
-                                    <i data-lucide="search-x" class="w-6 h-6"></i>
-                                </div>
-                                <p>No transactions found matching your filters.</p>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforelse
+                    @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>
@@ -159,7 +258,22 @@
     
     <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 relative z-10 shadow-2xl shadow-indigo-500/10 border border-slate-100 transform scale-95 opacity-0 transition-all duration-200" id="transactionModalContent">
         <button onclick="closeModal()" class="absolute top-6 right-6 p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-colors">
-            <i data-lucide="x" class="w-5 h-5"></i>
+            <!-- @license lucide-static v0.577.0 - ISC -->
+<svg class="w-5 h-5"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M18 6 6 18" />
+  <path d="m6 6 12 12" />
+</svg>
+
         </button>
 
         <div class="mb-6">
