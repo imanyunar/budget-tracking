@@ -1,199 +1,137 @@
 @extends('layouts.app')
 
-@section('title', 'Budgets - FinanceTracker')
+@section('title', 'Budgets · FinanceTracker')
 
 @section('content')
-<div class="space-y-6">
+<style>
+    .budget-card {
+        background:var(--surface); border:1px solid var(--border);
+        border-radius:16px; padding:22px;
+        box-shadow:var(--shadow-sm); transition:all 0.2s;
+        display:flex; flex-direction:column;
+    }
+    .budget-card:hover { box-shadow:var(--shadow); border-color:var(--border-2); }
+    .progress-track { height:6px; background:var(--surface-2); border-radius:6px; overflow:hidden; margin:10px 0 6px; }
+    .progress-fill { height:100%; border-radius:6px; transition:width 1s cubic-bezier(0.4,0,0.2,1); }
+</style>
+
+<div style="display:flex;flex-direction:column;gap:20px;">
 
     <!-- Header -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div class="page-header">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Budget Tracking</h1>
-            <p class="text-sm text-slate-500 font-medium">Set limits and track your spending habits.</p>
+            <h1 class="page-title-main">Budget Tracking</h1>
+            <p class="page-title-sub">Monthly spending limits by category</p>
         </div>
-        <div class="flex gap-3 w-full md:w-auto">
-            <button onclick="openBudgetModal()" class="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-bold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
-                <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-4 h-4"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M5 12h14" />
-  <path d="M12 5v14" />
-</svg>
- Set New Budget
-            </button>
-        </div>
+        <button onclick="openBudgetModal()" class="btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+            Set Budget
+        </button>
     </div>
 
     <!-- Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @if($budgets->isEmpty())
+    <div style="text-align:center;padding:64px 20px;border:1.5px dashed var(--border-2);border-radius:16px;">
+        <div class="empty-state-icon" style="margin:0 auto 16px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="empty-state-title">No budgets configured</div>
+        <div class="empty-state-text" style="margin-bottom:20px;">Set spending limits to track your category expenses</div>
+        <button onclick="openBudgetModal()" class="btn-primary">Set First Budget</button>
+    </div>
+    @else
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;">
         @foreach($budgets as $budget)
-        <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group flex flex-col h-full">
-            
-            <div class="flex items-center justify-between mb-8">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm" style="background: {{ $budget->category->color }}15; border: 1px solid {{ $budget->category->color }}30">
-                        <x-icon name="{{ $budget->category->icon }}" class="w-6 h-6" style="color: {{ $budget->category->color }}" />
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-slate-800">{{ $budget->category->name }}</h3>
-                        <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400 mt-0.5">Monthly Limit Monitoring</p>
-                    </div>
+        @php
+            $pct = min(100, max(0, $budget->percentage));
+            $barColor = $pct > 80 ? 'var(--danger)' : ($pct > 50 ? 'var(--warn)' : 'var(--success)');
+            $barHex = $pct > 80 ? '#f43f5e' : ($pct > 50 ? '#f59e0b' : '#10b981');
+            $badgeClass = $pct > 80 ? 'badge-down' : ($pct > 50 ? 'badge-warn' : 'badge-up');
+            $badgeLabel = $pct > 80 ? 'Over Limit' : ($pct > 50 ? 'Moderate' : 'On Track');
+        @endphp
+        <div class="budget-card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                <div style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:{{ $budget->category->color }}18;border:1px solid {{ $budget->category->color }}30;">
+                    <x-icon name="{{ $budget->category->icon }}" style="width:17px;height:17px;color:{{ $budget->category->color }}" />
                 </div>
-                <button class="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-colors">
-                    <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-5 h-5"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <circle cx="12" cy="12" r="1" />
-  <circle cx="19" cy="12" r="1" />
-  <circle cx="5" cy="12" r="1" />
-</svg>
-
-                </button>
+                <div style="flex:1;">
+                    <div style="font-size:14.5px;font-weight:700;color:var(--text);">{{ $budget->category->name }}</div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:1px;">Monthly limit</div>
+                </div>
+                <span class="badge {{ $badgeClass }}">{{ $badgeLabel }}</span>
             </div>
 
-            <div class="flex-1 flex flex-col justify-end mt-4">
-                <div class="flex items-end justify-between mb-3">
-                    <div>
-                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Total Limit</p>
-                        <p class="text-xl font-black text-slate-900">IDR {{ number_format($budget->amount, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Spent</p>
-                        <p class="text-lg font-black {{ $budget->percentage > 80 ? 'text-rose-600' : 'text-indigo-600' }}">
-                            IDR {{ number_format($budget->spent, 0, ',', '.') }}
-                        </p>
-                    </div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+                <div>
+                    <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:3px;">Spent</div>
+                    <div style="font-size:20px;font-weight:800;letter-spacing:-0.03em;color:{{ $barHex }};">{{ number_format($budget->spent, 0, ',', '.') }}</div>
                 </div>
-
-                <!-- Custom Progress Bar -->
-                <div class="relative h-3 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                    <div class="h-full rounded-full transition-all duration-1000 
-                        {{ $budget->percentage > 80 ? 'bg-gradient-to-r from-rose-500 to-rose-400' : 
-                          ($budget->percentage > 50 ? 'bg-gradient-to-r from-amber-500 to-amber-400' : 'bg-gradient-to-r from-indigo-500 to-violet-500') }}" 
-                        style="width: {{ min(100, max(0, $budget->percentage)) }}%">
-                    </div>
-                </div>
-                
-                <div class="flex items-center justify-between mt-3">
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">{{ round($budget->percentage) }}% Used</span>
-                    <span class="text-[10px] font-bold uppercase tracking-wider {{ $budget->percentage > 80 ? 'text-rose-600' : 'text-slate-500' }}">
-                        {{ number_format(max(0, $budget->amount - $budget->spent), 0, ',', '.') }} Remaining
-                    </span>
+                <div style="text-align:right;">
+                    <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:3px;">Limit</div>
+                    <div style="font-size:20px;font-weight:800;letter-spacing:-0.03em;color:var(--text-2);">{{ number_format($budget->amount, 0, ',', '.') }}</div>
                 </div>
             </div>
 
-            <div class="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
-                <button class="text-[10px] font-bold uppercase tracking-wider text-slate-500 hover:text-indigo-600 transition-colors" onclick="openBudgetModal('{{ $budget->category_id }}', '{{ $budget->amount }}')">
-                    Adjust Limits
-                </button>
-                <button class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 hover:text-indigo-800 transition-colors">
-                    Alert Settings
+            <div class="progress-track">
+                <div class="progress-fill" style="width:{{ $pct }}%;background:{{ $barHex }};"></div>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div style="font-size:12px;color:var(--muted);">{{ round($pct) }}% used</div>
+                <div style="font-size:12px;font-weight:600;color:{{ $pct > 80 ? 'var(--danger)' : 'var(--muted)' }};">
+                    {{ number_format(max(0, $budget->amount - $budget->spent), 0, ',', '.') }} remaining
+                </div>
+            </div>
+
+            <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;">
+                <button onclick="openBudgetModal('{{ $budget->category_id }}', '{{ $budget->amount }}')" class="section-link" style="background:none;border:none;cursor:pointer;font-size:13px;font-weight:500;color:var(--primary);">
+                    Adjust Budget →
                 </button>
             </div>
         </div>
         @endforeach
     </div>
+    @endif
 </div>
 
-<!-- Modal -->
-<div id="budgetModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
-    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeBudgetModal()"></div>
-    
-    <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 relative z-10 shadow-2xl shadow-indigo-500/10 border border-slate-100 transform scale-95 opacity-0 transition-all duration-200" id="budgetModalContent">
-        <button onclick="closeBudgetModal()" class="absolute top-6 right-6 p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-colors">
-            <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-5 h-5"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M18 6 6 18" />
-  <path d="m6 6 12 12" />
-</svg>
-
-        </button>
-
-        <div class="mb-6">
-            <h2 class="text-xl font-black text-slate-900">Set Category Budget</h2>
-            <p class="text-sm font-medium text-slate-500 mt-0.5">Define your monthly spending target</p>
+<!-- Budget Modal -->
+<div id="budgetModal" class="modal-overlay" onclick="if(event.target===this)closeBudgetModal()">
+    <div class="modal-box" id="budgetModalBox">
+        <div class="modal-header">
+            <div><div class="modal-title">Set Category Budget</div><div class="modal-subtitle">Define a monthly spending limit</div></div>
+            <button class="modal-close" onclick="closeBudgetModal()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>
         </div>
-        
-        <form action="{{ route('budgets.store') }}" method="POST" class="space-y-4">
+        <form action="{{ route('budgets.store') }}" method="POST">
             @csrf
-            <div>
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 ml-1">Category</label>
-                <select name="category_id" id="budget_category_id" required 
-                        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-700">
-                    @foreach($categories as $cat)
-                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                    @endforeach
-                </select>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+                <div>
+                    <label class="input-label">Category</label>
+                    <select name="category_id" id="budget_category_id" required class="input-field">
+                        @foreach($categories as $cat)<option value="{{ $cat->id }}">{{ $cat->name }}</option>@endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="input-label">Monthly Limit (IDR)</label>
+                    <input type="number" name="amount" id="budget_amount" required placeholder="0" class="input-field">
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:12px;margin-top:4px;">Save Budget</button>
             </div>
-
-            <div>
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 ml-1">Monthly Limit (IDR)</label>
-                <input type="number" name="amount" id="budget_amount" required placeholder="0.00" 
-                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none font-bold">
-            </div>
-
-            <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold rounded-xl mt-2 hover:shadow-lg hover:shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
-                Save Budget
-            </button>
         </form>
     </div>
 </div>
 
 @push('scripts')
 <script>
-    const bModal = document.getElementById('budgetModal');
-    const bModalContent = document.getElementById('budgetModalContent');
-
-    function openBudgetModal(categoryId = '', amount = '') { 
-        bModal.classList.remove('hidden');
-        bModal.classList.add('flex');
-        document.body.classList.add('overflow-hidden');
-        
-        if (categoryId) document.getElementById('budget_category_id').value = categoryId;
+    function openBudgetModal(catId='', amount='') {
+        if (catId) document.getElementById('budget_category_id').value = catId;
         if (amount) document.getElementById('budget_amount').value = parseFloat(amount);
-        
-        setTimeout(() => {
-            bModalContent.classList.remove('scale-95', 'opacity-0');
-            bModalContent.classList.add('scale-100', 'opacity-100');
-        }, 10);
+        document.getElementById('budgetModal').classList.add('open');
+        setTimeout(() => document.getElementById('budgetModalBox').classList.add('open'), 10);
+        document.body.style.overflow = 'hidden';
     }
-    
-    function closeBudgetModal() { 
-        bModalContent.classList.remove('scale-100', 'opacity-100');
-        bModalContent.classList.add('scale-95', 'opacity-0');
-        setTimeout(() => {
-            bModal.classList.add('hidden');
-            bModal.classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
-        }, 200);
+    function closeBudgetModal() {
+        document.getElementById('budgetModalBox').classList.remove('open');
+        setTimeout(() => { document.getElementById('budgetModal').classList.remove('open'); document.body.style.overflow = ''; }, 250);
     }
 </script>
 @endpush

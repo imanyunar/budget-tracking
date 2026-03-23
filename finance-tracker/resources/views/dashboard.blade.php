@@ -1,58 +1,50 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard - FinanceTracker')
+@section('title', 'Dashboard · FinanceTracker')
 
 @push('head-scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js" defer></script>
 @endpush
 
 @section('content')
-<div class="space-y-6">
+<style>
+    .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+    .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    @media(max-width:1200px) { .grid-4 { grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:900px) { .grid-4 { grid-template-columns:1fr 1fr; } .grid-3 { grid-template-columns:1fr; } }
+    @media(max-width:560px) { .grid-4 { grid-template-columns:1fr; } }
+    .chart-row { display:grid; grid-template-columns:2fr 1fr; gap:14px; }
+    .bottom-row { display:grid; grid-template-columns:1fr 1.8fr; gap:14px; }
+    @media(max-width:1000px) { .chart-row,.bottom-row { grid-template-columns:1fr; } }
+    .stat-accent-bar {
+        position:absolute; top:0; left:0; right:0; height:3px; border-radius:16px 16px 0 0;
+    }
+    .alert-strip {
+        display:flex; align-items:center; gap:12px; padding:12px 16px;
+        border-radius:11px; border:1px solid; font-size:13.5px; margin-bottom:8px;
+    }
+    .wallet-row {
+        display:flex; align-items:center; justify-content:space-between;
+        padding:10px 0; border-bottom:1px solid var(--border);
+    }
+    .wallet-row:last-child { border-bottom:none; }
+</style>
 
-    <!-- Header Actions -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<div style="display:flex;flex-direction:column;gap:22px;">
+
+    <!-- Page Header -->
+    <div class="page-header">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Financial Overview</h1>
-            <p class="text-sm text-slate-500 font-medium">{{ now()->format('l, d F Y') }}</p>
+            <h1 class="page-title-main">Financial Overview</h1>
+            <p class="page-title-sub">{{ now()->format('l, d F Y') }}</p>
         </div>
-        <div class="flex items-center gap-3 w-full sm:w-auto">
-            <a href="{{ route('transactions.export') }}" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm">
-                <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-4 h-4"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M12 15V3" />
-  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-  <path d="m7 10 5 5 5-5" />
-</svg>
-
-                Export
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <a href="{{ route('transactions.export') }}" class="btn-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                Export CSV
             </a>
-            <button onclick="openModal()" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-bold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
-                <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-4 h-4"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M5 12h14" />
-  <path d="M12 5v14" />
-</svg>
-
+            <button onclick="openTxModal()" class="btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
                 New Transaction
             </button>
         </div>
@@ -60,581 +52,443 @@
 
     <!-- Budget Alerts -->
     @if(!empty($budgetAlerts))
-    <div class="flex flex-col gap-3">
+    <div>
         @foreach($budgetAlerts as $alert)
         @php
-            $alertColors = [
-                'danger'  => 'bg-rose-50 border-rose-200 text-rose-800 icon-rose',
-                'warning' => 'bg-orange-50 border-orange-200 text-orange-800 icon-orange',
-                'info'    => 'bg-blue-50 border-blue-200 text-blue-800 icon-blue',
+            $styles = [
+                'danger'  => 'background:var(--danger-dim);border-color:rgba(244,63,94,0.25);color:#e11d48;',
+                'warning' => 'background:var(--warn-dim);border-color:rgba(245,158,11,0.25);color:#d97706;',
+                'info'    => 'background:var(--blue-dim);border-color:rgba(59,130,246,0.25);color:#2563eb;',
             ][$alert['type']];
         @endphp
-        <div class="flex items-center justify-between p-4 rounded-2xl border {{ $alertColors }}">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 
-                    {{ $alert['type'] === 'danger' ? 'bg-rose-100' : ($alert['type'] === 'warning' ? 'bg-orange-100' : 'bg-blue-100') }}">
-                    <x-icon name="{{ $alert['icon'] }}" class="w-5 h-5 {{ $alert['type'] === 'danger' ? 'text-rose-600' : ($alert['type'] === 'warning' ? 'text-orange-600' : 'text-blue-600') }}" />
-                </div>
-                <div>
-                    <h4 class="text-sm font-bold">{{ $alert['title'] }}</h4>
-                    <p class="text-xs font-medium opacity-80 mt-0.5">{{ $alert['message'] }}</p>
-                </div>
+        <div class="alert-strip" style="{{ $styles }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+            <div style="flex:1;">
+                <div style="font-weight:600;font-size:13px;">{{ $alert['title'] }}</div>
+                <div style="font-size:11.5px;opacity:0.75;margin-top:1px;">{{ $alert['message'] }}</div>
             </div>
-            <a href="{{ $alert['type'] !== 'info' ? route('budgets.index') : route('transactions.index') }}" 
-               class="px-4 py-2 bg-white/60 hover:bg-white rounded-lg text-xs font-bold transition-colors whitespace-nowrap">
-                {{ $alert['type'] !== 'info' ? 'Adjust' : 'View' }} &rarr;
+            <a href="{{ $alert['type'] !== 'info' ? route('budgets.index') : route('transactions.index') }}"
+               style="font-size:12px;text-decoration:none;color:inherit;font-weight:600;white-space:nowrap;">
+                {{ $alert['type'] !== 'info' ? 'Adjust' : 'View' }} →
             </a>
         </div>
         @endforeach
     </div>
     @endif
 
-    <!-- Weekly Banner -->
-    <div class="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg shadow-indigo-500/20">
-        <!-- Decoration -->
-        <div class="absolute top-0 right-0 -mr-8 -mt-8 w-48 h-48 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 -ml-8 -mb-8 w-32 h-32 bg-fuchsia-400/20 rounded-full blur-2xl pointer-events-none"></div>
-
-        <div class="relative z-10 text-white w-full md:w-auto text-center md:text-left">
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3">
-                <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-3 h-3"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
-</svg>
- Weekly Summary
-            </div>
-            <h2 class="text-2xl sm:text-3xl font-black mb-2">Performance This Week</h2>
-            <p class="text-indigo-100 text-sm font-medium">
-                Spending is 
-                <span class="font-bold {{ $weeklyTrend <= 0 ? 'text-emerald-300' : 'text-rose-300' }}">
-                    {{ $weeklyTrend <= 0 ? '↓ down' : '↑ up' }}
-                </span>
-                {{ number_format(abs($weeklyTrend), 1) }}% compared to last week
-            </p>
-        </div>
-
-        <div class="relative z-10 flex gap-6 sm:gap-12 text-center">
-            <div>
-                <p class="text-[10px] uppercase tracking-wider text-indigo-200 font-bold mb-1">Spent</p>
-                <p class="text-xl sm:text-2xl font-black text-white">Rp{{ number_format($spentThisWeek, 0, ',', '.') }}</p>
-            </div>
-            <div>
-                <p class="text-[10px] uppercase tracking-wider text-indigo-200 font-bold mb-1">Top Cat</p>
-                <p class="text-xl sm:text-2xl font-black text-white">{{ $topCategoryThisWeek->category->name ?? '—' }}</p>
-            </div>
-        </div>
-    </div>
-
     <!-- Stat Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Wealth -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] relative overflow-hidden group">
-            <div class="absolute -right-6 -top-6 w-24 h-24 bg-indigo-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
-            <div class="relative z-10">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center border border-indigo-200">
-                        <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-6 h-6 text-indigo-600"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" />
-  <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" />
-</svg>
-
-                    </div>
+    <div class="grid-4">
+        <!-- Total Wealth -->
+        <div class="stat-card">
+            <div class="stat-accent-bar" style="background:linear-gradient(90deg,#6366f1,#818cf8);"></div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+                <div class="stat-icon" style="background:var(--primary-dim);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="1" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                 </div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Wealth</p>
-                <h3 class="text-2xl font-black text-slate-900">IDR {{ number_format($totalBalance, 0, ',', '.') }}</h3>
+                <span class="badge badge-primary">NET WORTH</span>
             </div>
+            <div class="stat-label">Total Balance</div>
+            <div class="stat-value" style="color:var(--primary);">{{ number_format($totalBalance, 0, ',', '.') }}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:3px;">IDR · All Wallets</div>
         </div>
 
         <!-- Income -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] relative overflow-hidden group">
-            <div class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
-            <div class="relative z-10">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center border border-emerald-200">
-                        <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-6 h-6 text-emerald-600"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M17 7 7 17" />
-  <path d="M17 17H7V7" />
-</svg>
-
-                    </div>
-                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold {{ $incomeTrend >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
-                        {{ $incomeTrend >= 0 ? '+' : '' }}{{ number_format($incomeTrend, 1) }}%
-                    </span>
+        <div class="stat-card">
+            <div class="stat-accent-bar" style="background:linear-gradient(90deg,#10b981,#34d399);"></div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+                <div class="stat-icon" style="background:var(--success-dim);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="19" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
                 </div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Income ({{ now()->format('M') }})</p>
-                <h3 class="text-2xl font-black text-emerald-600">IDR {{ number_format($monthlyIncome, 0, ',', '.') }}</h3>
+                <span class="badge {{ $incomeTrend >= 0 ? 'badge-up' : 'badge-down' }}">
+                    {{ $incomeTrend >= 0 ? '↑' : '↓' }} {{ number_format(abs($incomeTrend), 1) }}%
+                </span>
             </div>
+            <div class="stat-label">Income · {{ now()->format('M') }}</div>
+            <div class="stat-value">{{ number_format($monthlyIncome, 0, ',', '.') }}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:3px;">IDR · This month</div>
         </div>
 
-        <!-- Expense -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] relative overflow-hidden group">
-            <div class="absolute -right-6 -top-6 w-24 h-24 bg-rose-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
-            <div class="relative z-10">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 rounded-xl bg-rose-100 flex items-center justify-center border border-rose-200">
-                        <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-6 h-6 text-rose-600"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M7 7h10v10" />
-  <path d="M7 17 17 7" />
-</svg>
-
-                    </div>
-                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold {{ $expenseTrend <= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
-                        {{ $expenseTrend > 0 ? '+' : '' }}{{ number_format($expenseTrend, 1) }}%
-                    </span>
+        <!-- Expenses -->
+        <div class="stat-card">
+            <div class="stat-accent-bar" style="background:linear-gradient(90deg,#f43f5e,#fb7185);"></div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+                <div class="stat-icon" style="background:var(--danger-dim);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
                 </div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Expenses ({{ now()->format('M') }})</p>
-                <h3 class="text-2xl font-black text-rose-600">IDR {{ number_format($monthlyExpense, 0, ',', '.') }}</h3>
+                <span class="badge {{ $expenseTrend <= 0 ? 'badge-up' : 'badge-down' }}">
+                    {{ $expenseTrend > 0 ? '↑' : '↓' }} {{ number_format(abs($expenseTrend), 1) }}%
+                </span>
             </div>
+            <div class="stat-label">Expenses · {{ now()->format('M') }}</div>
+            <div class="stat-value" style="color:var(--danger);">{{ number_format($monthlyExpense, 0, ',', '.') }}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:3px;">IDR · This month</div>
+        </div>
+
+        <!-- Weekly -->
+        <div class="stat-card">
+            <div class="stat-accent-bar" style="background:linear-gradient(90deg,#3b82f6,#60a5fa);"></div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+                <div class="stat-icon" style="background:var(--blue-dim);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <span class="badge {{ $weeklyTrend <= 0 ? 'badge-up' : 'badge-down' }}">
+                    {{ $weeklyTrend <= 0 ? '↓' : '↑' }} {{ number_format(abs($weeklyTrend), 1) }}%
+                </span>
+            </div>
+            <div class="stat-label">Weekly Spent</div>
+            <div class="stat-value" style="color:var(--blue);">{{ number_format($spentThisWeek, 0, ',', '.') }}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:3px;">IDR · This week</div>
         </div>
     </div>
 
     <!-- Charts Row -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Cashflow -->
-        <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <div class="flex justify-between items-center mb-6">
+    <div class="chart-row">
+        <!-- Cashflow Chart -->
+        <div class="card" style="padding:22px;">
+            <div class="section-head">
                 <div>
-                    <h3 class="text-base font-bold text-slate-900">Cashflow Analytics</h3>
-                    <p class="text-xs font-medium text-slate-500">Last 6 months performance</p>
+                    <h3>Cashflow Analytics</h3>
+                    <div class="section-head-sub">6-month income vs expenses</div>
                 </div>
-                <!-- Legend Custom -->
-                <div class="hidden sm:flex items-center gap-4 text-xs font-bold text-slate-600">
-                    <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>Income</div>
-                    <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-rose-500"></div>Expense</div>
+                <div style="display:flex;gap:16px;align-items:center;">
+                    <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);font-weight:500;">
+                        <span style="width:9px;height:9px;border-radius:50%;background:#10b981;display:inline-block;flex-shrink:0;"></span> Income
+                    </div>
+                    <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);font-weight:500;">
+                        <span style="width:9px;height:9px;border-radius:50%;background:#f43f5e;display:inline-block;flex-shrink:0;"></span> Expense
+                    </div>
                 </div>
             </div>
-            <div class="h-[260px] relative w-full"><canvas id="cashflowChart"></canvas></div>
+            <div style="height:240px;position:relative;">
+                <canvas id="cashflowChart"></canvas>
+            </div>
         </div>
 
-        <!-- Categories -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <div class="mb-6">
-                <h3 class="text-base font-bold text-slate-900">Expense Breakdown</h3>
-                <p class="text-xs font-medium text-slate-500">By category</p>
+        <!-- Category Breakdown -->
+        <div class="card" style="padding:22px;">
+            <div class="section-head">
+                <div>
+                    <h3>Breakdown</h3>
+                    <div class="section-head-sub">by category</div>
+                </div>
             </div>
-            <div class="h-[220px] relative w-full flex items-center justify-center">
+            <div style="height:150px;position:relative;display:flex;align-items:center;justify-content:center;">
                 <canvas id="categoryChart"></canvas>
             </div>
+            <div style="margin-top:14px;display:flex;flex-direction:column;gap:7px;" id="catLegend"></div>
         </div>
     </div>
 
     <!-- Bottom Row -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="bottom-row">
         <!-- Wallets -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-base font-bold text-slate-900">Your Wallets</h3>
-                <a href="{{ route('wallets.index') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">View All</a>
+        <div class="card" style="padding:22px;">
+            <div class="section-head">
+                <div>
+                    <h3>Your Wallets</h3>
+                    <div class="section-head-sub">{{ count($portfolios) }} accounts</div>
+                </div>
+                <a href="{{ route('wallets.index') }}" class="section-link">View all →</a>
             </div>
-            <div class="flex-1 flex flex-col gap-3">
-                @foreach($portfolios as $portfolio)
-                <div class="flex items-center justify-between p-3 rounded-xl border border-slate-100 hover:border-slate-200 hover:bg-slate-50 transition-colors">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: {{ $portfolio->color }}15; border: 1px solid {{ $portfolio->color }}30;">
-                            <x-icon name="{{ $portfolio->icon ?: 'wallet' }}" class="w-5 h-5" style="color: {{ $portfolio->color }}" />
+            <div>
+                @forelse($portfolios as $portfolio)
+                <div class="wallet-row">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:{{ $portfolio->color }}18;border:1px solid {{ $portfolio->color }}30;">
+                            <x-icon name="{{ $portfolio->icon ?: 'wallet' }}" style="width:16px;height:16px;color:{{ $portfolio->color }}" />
                         </div>
                         <div>
-                            <p class="text-sm font-bold text-slate-800">{{ $portfolio->name }}</p>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ $portfolio->currency }}</p>
+                            <div style="font-size:13px;font-weight:600;color:var(--text);">{{ $portfolio->name }}</div>
+                            <div style="font-size:11px;color:var(--muted);">{{ $portfolio->currency }}</div>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <p class="text-sm font-bold text-slate-900">{{ number_format($portfolio->balance, 0, ',', '.') }}</p>
-                        <p class="text-xs font-bold {{ $portfolio->roi >= 0 ? 'text-emerald-600' : 'text-rose-600' }}">
-                            {{ $portfolio->roi >= 0 ? '+' : '' }}{{ number_format($portfolio->roi, 1) }}%
-                        </p>
+                    <div style="text-align:right;">
+                        <div style="font-size:13.5px;font-weight:700;color:var(--text);">{{ number_format($portfolio->balance, 0, ',', '.') }}</div>
+                        <div style="font-size:11px;font-weight:600;color:{{ ($portfolio->roi ?? 0) >= 0 ? 'var(--success)' : 'var(--danger)' }};">{{ ($portfolio->roi ?? 0) >= 0 ? '+' : '' }}{{ number_format($portfolio->roi ?? 0, 1) }}%</div>
                     </div>
                 </div>
-                @endforeach
+                @empty
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+                    </div>
+                    <div class="empty-state-title">No wallets yet</div>
+                    <div class="empty-state-text">Add your first wallet to get started</div>
+                </div>
+                @endforelse
             </div>
         </div>
 
         <!-- Recent Transactions -->
-        <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
-            <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="card" style="padding:22px;">
+            <div class="section-head">
                 <div>
-                    <h3 class="text-base font-bold text-slate-900">Recent Transactions</h3>
-                    <p class="text-xs font-medium text-slate-500">Your latest financial activity</p>
+                    <h3>Recent Transactions</h3>
+                    <div class="section-head-sub">Latest activity</div>
                 </div>
-                <form action="{{ route('transactions.index') }}" method="GET" class="flex gap-2 relative">
-                    <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="m21 21-4.34-4.34" />
-  <circle cx="11" cy="11" r="8" />
-</svg>
-
-                    <input type="text" name="search" placeholder="Search..." class="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all w-full sm:w-48">
-                </form>
+                <a href="{{ route('transactions.index') }}" class="section-link">All →</a>
             </div>
-            
-            <!-- Mobile View (Cards) -->
-            <div class="block md:hidden divide-y divide-slate-100">
-                @if($recentTransactions->isEmpty())
-                    <div class="p-6 text-center text-slate-500 text-sm font-medium">No recent transactions.</div>
-                @else
-                    @foreach($recentTransactions as $tx)
-                    <div class="p-4 hover:bg-slate-50 transition-colors">
-                        <div class="flex justify-between items-start gap-3">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border {{ $tx->type === 'income' ? 'bg-emerald-50 border-emerald-100' : 'bg-rose-50 border-rose-100' }}">
-                                    <x-icon name="{{ $tx->type === 'income' ? 'arrow-down-left' : 'arrow-up-right' }}" class="w-5 h-5 {{ $tx->type === 'income' ? 'text-emerald-600' : 'text-rose-600' }}" />
-                                </div>
-                                <div>
-                                    <p class="text-sm font-bold text-slate-800">{{ $tx->description }}</p>
-                                    <div class="flex items-center gap-1.5 mt-0.5">
-                                        <span class="w-1.5 h-1.5 rounded-full" style="background-color: {{ $tx->category->color ?? '#cbd5e1' }}"></span>
-                                        <span class="text-xs font-medium text-slate-500">{{ $tx->category->name ?? 'Uncategorized' }} &bull; {{ $tx->date->format('d M') }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="font-black text-sm {{ $tx->type === 'income' ? 'text-emerald-600' : 'text-rose-600' }}">
-                                    {{ $tx->type === 'income' ? '+' : '-' }}{{ number_format($tx->amount, 0, ',', '.') }}
-                                </span>
-                            </div>
-                        </div>
+            <div>
+                @forelse($recentTransactions as $tx)
+                <div class="tx-row">
+                    <div class="tx-icon" style="background:{{ $tx->type === 'income' ? 'var(--success-dim)' : 'var(--danger-dim)' }};border:1px solid {{ $tx->type === 'income' ? 'rgba(16,185,129,0.2)' : 'rgba(244,63,94,0.2)' }};">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{ $tx->type === 'income' ? '#10b981' : '#f43f5e' }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            @if($tx->type === 'income')
+                                <line x1="12" x2="12" y1="19" y2="5"/><polyline points="5 12 12 5 19 12"/>
+                            @else
+                                <line x1="12" x2="12" y1="5" y2="19"/><polyline points="19 12 12 19 5 12"/>
+                            @endif
+                        </svg>
                     </div>
-                    @endforeach
-                @endif
-            </div>
-
-            <!-- Desktop View (Table) -->
-            <div class="hidden md:block overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-50/50">
-                            <th class="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">Transaction</th>
-                            <th class="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 text-center">Type</th>
-                            <th class="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 text-right">Date</th>
-                            <th class="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 text-right">Amount (IDR)</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        @foreach($recentTransactions as $tx)
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border 
-                                        {{ $tx->type === 'income' ? 'bg-emerald-50 border-emerald-100' : 'bg-rose-50 border-rose-100' }}">
-                                        <x-icon name="{{ $tx->type === 'income' ? 'arrow-down-left' : 'arrow-up-right' }}" class="w-5 h-5 {{ $tx->type === 'income' ? 'text-emerald-600' : 'text-rose-600' }}" />
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-slate-800">{{ $tx->description }}</p>
-                                        <div class="flex items-center gap-1.5 mt-0.5">
-                                            <span class="w-2 h-2 rounded-full" style="background-color: {{ $tx->category->color ?? '#cbd5e1' }}"></span>
-                                            <span class="text-xs font-medium text-slate-500">{{ $tx->category->name ?? 'Uncategorized' }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                <span class="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider
-                                    {{ $tx->type === 'income' ? 'bg-emerald-100 text-emerald-700' : 'bg-indigo-100 text-indigo-700' }}">
-                                    {{ $tx->type }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <span class="text-xs font-medium text-slate-500">{{ $tx->date->format('d M Y') }}</span>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <span class="font-black text-sm {{ $tx->type === 'income' ? 'text-emerald-600' : 'text-rose-600' }}">
-                                    {{ $tx->type === 'income' ? '+' : '-' }}{{ number_format($tx->amount, 0, ',', '.') }}
-                                </span>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <div class="p-4 bg-slate-50/50 border-t border-slate-100 text-center mt-auto">
-                <a href="{{ route('transactions.index') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
-                    View All Activity &rarr;
-                </a>
+                    <div style="flex:1;min-width:0;">
+                        <div class="tx-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $tx->description ?: $tx->category->name }}</div>
+                        <div class="tx-meta">{{ $tx->category->name ?? '—' }} · {{ $tx->date->format('d M') }}</div>
+                    </div>
+                    <div style="font-size:14px;font-weight:700;color:{{ $tx->type === 'income' ? 'var(--success)' : 'var(--danger)' }};flex-shrink:0;">
+                        {{ $tx->type === 'income' ? '+' : '-' }}{{ number_format($tx->amount, 0, ',', '.') }}
+                    </div>
+                </div>
+                @empty
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);"><path d="M16 3h5v5"/><path d="M8 21H3v-5"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
+                    </div>
+                    <div class="empty-state-title">No transactions yet</div>
+                    <div class="empty-state-text">Record your first transaction above</div>
+                </div>
+                @endforelse
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal -->
-<div id="txModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
-    <!-- Backdrop -->
-    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeModal()"></div>
-    
-    <!-- Modal Content -->
-    <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 relative z-10 shadow-2xl shadow-indigo-500/10 border border-slate-100 transform scale-95 opacity-0 transition-all duration-200" id="txModalContent">
-        <button onclick="closeModal()" class="absolute top-6 right-6 p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-colors">
-            <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-5 h-5"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M18 6 6 18" />
-  <path d="m6 6 12 12" />
-</svg>
-
-        </button>
-
-        <div class="mb-6">
-            <h2 class="text-xl font-black text-slate-900">New Transaction</h2>
-            <p class="text-sm font-medium text-slate-500 mt-0.5">Record your financial activity</p>
+<!-- Transaction Modal -->
+<div id="txModal" class="modal-overlay" onclick="if(event.target===this)closeTxModal()">
+    <div class="modal-box" id="txModalBox">
+        <div class="modal-header">
+            <div>
+                <div class="modal-title">New Transaction</div>
+                <div class="modal-subtitle">Record a financial activity</div>
+            </div>
+            <button class="modal-close" onclick="closeTxModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
+            </button>
         </div>
 
-        <form action="{{ route('transactions.store') }}" method="POST" class="space-y-4">
+        <form action="{{ route('transactions.store') }}" method="POST">
             @csrf
             <input type="hidden" name="type" id="tx_type" value="expense">
 
-            <!-- Type Selector -->
-            <div class="flex p-1 bg-slate-100 rounded-2xl">
-                <button type="button" onclick="setTxType('expense')" id="btn-tx-expense" class="flex-1 py-2.5 rounded-xl text-sm font-bold bg-white text-rose-600 shadow-sm transition-all">
+            <div class="type-toggle">
+                <button type="button" onclick="setType('expense')" id="btn-expense" class="type-btn active-expense">
                     Expense
                 </button>
-                <button type="button" onclick="setTxType('income')" id="btn-tx-income" class="flex-1 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">
+                <button type="button" onclick="setType('income')" id="btn-income" class="type-btn">
                     Income
                 </button>
             </div>
 
-            <div>
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 ml-1">Description</label>
-                <input type="text" name="description" required placeholder="e.g. Lunch, Salary" 
-                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none">
-            </div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+                <div>
+                    <label class="input-label">Description</label>
+                    <input type="text" name="description" required placeholder="e.g. Lunch, Salary" class="input-field">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div>
+                        <label class="input-label">Amount (IDR)</label>
+                        <input type="number" name="amount" required placeholder="0" class="input-field">
+                    </div>
+                    <div>
+                        <label class="input-label">Date</label>
+                        <input type="date" name="date" required value="{{ date('Y-m-d') }}" class="input-field">
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div>
+                        <label class="input-label">Category</label>
+                        <select name="category_id" id="catSelect" required class="input-field" onchange="checkCategory()">
+                            @foreach($categories as $cat)
+                            <option value="{{ $cat->id }}" data-name="{{ strtolower($cat->name) }}">{{ $cat->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="input-label">Wallet</label>
+                        <select name="portfolio_id" required class="input-field">
+                            @foreach($allPortfolios as $wf)
+                            <option value="{{ $wf->id }}">{{ $wf->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    </div>
+                </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 ml-1">Amount (IDR)</label>
-                    <input type="number" name="amount" required placeholder="0" 
-                           class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none">
+                <!-- Investment Extra Fields -->
+                <div id="invFields" style="display:none;flex-direction:column;gap:14px;padding-top:12px;margin-top:2px;border-top:1px dashed var(--border);">
+                    <div style="font-size:11.5px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.06em;display:flex;align-items:center;gap:6px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                        Investment Details
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <div>
+                            <label class="input-label">Asset Type</label>
+                            <select name="asset_type" id="invAssetType" class="input-field" onchange="toggleInvType()">
+                                <option value="stock">Stock</option>
+                                <option value="crypto">Crypto</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="input-label">Symbol</label>
+                            <input type="text" name="symbol" id="invSymbol" placeholder="e.g. BBCA.JK" class="input-field" style="text-transform:uppercase;">
+                        </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <div>
+                            <label class="input-label" id="invPriceLabel">Price per Share</label>
+                            <input type="number" name="average_price" id="invPrice" placeholder="0" step="any" class="input-field">
+                        </div>
+                        <div id="invLotsWrap">
+                            <label class="input-label">Lots (1 lot = 100 shares)</label>
+                            <input type="number" name="lots" id="invLots" placeholder="0" class="input-field">
+                        </div>
+                        <div id="invQtyWrap" style="display:none;">
+                            <label class="input-label">Quantity</label>
+                            <input type="number" name="quantity" id="invQty" placeholder="0" step="any" class="input-field" disabled>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 ml-1">Date</label>
-                    <input type="date" name="date" required value="{{ date('Y-m-d') }}" 
-                           class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-700">
-                </div>
-            </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 ml-1">Category</label>
-                    <select name="category_id" required 
-                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-700">
-                        @foreach($categories as $cat)
-                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 ml-1">Wallet</label>
-                    <select name="portfolio_id" required 
-                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-700">
-                        @foreach($allPortfolios as $wf)
-                        <option value="{{ $wf->id }}">{{ $wf->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                <button type="submit" class="btn-primary" style="width:100%;justify-content:center;margin-top:4px;padding:12px;">
+                    Record Transaction
+                </button>
             </div>
-
-            <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold rounded-xl mt-2 hover:shadow-lg hover:shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
-                Record Transaction
-            </button>
         </form>
     </div>
 </div>
 
 @push('scripts')
 <script>
-    // Modal Logic
-    const modal = document.getElementById('txModal');
-    const modalContent = document.getElementById('txModalContent');
-    
-    function openModal() {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.classList.add('overflow-hidden');
-        setTimeout(() => {
-            modalContent.classList.remove('scale-95', 'opacity-0');
-            modalContent.classList.add('scale-100', 'opacity-100');
-        }, 10);
+    function openTxModal() {
+        document.getElementById('txModal').classList.add('open');
+        setTimeout(() => document.getElementById('txModalBox').classList.add('open'), 10);
+        document.body.style.overflow = 'hidden';
     }
-    
-    function closeModal() {
-        modalContent.classList.remove('scale-100', 'opacity-100');
-        modalContent.classList.add('scale-95', 'opacity-0');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
-        }, 200);
+    function closeTxModal() {
+        document.getElementById('txModalBox').classList.remove('open');
+        setTimeout(() => { document.getElementById('txModal').classList.remove('open'); document.body.style.overflow = ''; }, 250);
     }
 
-    function setTxType(type) {
+    function setType(type) {
         document.getElementById('tx_type').value = type;
-        const btnExp = document.getElementById('btn-tx-expense');
-        const btnInc = document.getElementById('btn-tx-income');
+        const e = document.getElementById('btn-expense');
+        const i = document.getElementById('btn-income');
+        e.className = 'type-btn' + (type === 'expense' ? ' active-expense' : '');
+        i.className = 'type-btn' + (type === 'income' ? ' active-income' : '');
+    }
+
+    function checkCategory() {
+        const sel = document.getElementById('catSelect');
+        const opt = sel.options[sel.selectedIndex];
+        const isInv = opt && opt.getAttribute('data-name') === 'investment';
+        document.getElementById('invFields').style.display = isInv ? 'flex' : 'none';
         
-        if (type === 'expense') {
-            btnExp.className = 'flex-1 py-2.5 rounded-xl text-sm font-bold bg-white text-rose-600 shadow-sm transition-all';
-            btnInc.className = 'flex-1 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:text-slate-700 transition-all';
-        } else {
-            btnExp.className = 'flex-1 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:text-slate-700 transition-all';
-            btnInc.className = 'flex-1 py-2.5 rounded-xl text-sm font-bold bg-white text-emerald-600 shadow-sm transition-all';
+        // toggle required inputs
+        document.getElementById('invSymbol').required = isInv;
+        document.getElementById('invPrice').required = isInv;
+        
+        if(isInv) toggleInvType();
+        else {
+            document.getElementById('invLots').required = false;
+            document.getElementById('invQty').required = false;
         }
     }
 
-    // Initialize Charts when Chart.js is loaded
+    function toggleInvType() {
+        const type = document.getElementById('invAssetType').value;
+        const isCrypto = type === 'crypto';
+        
+        document.getElementById('invLotsWrap').style.display = isCrypto ? 'none' : 'block';
+        document.getElementById('invQtyWrap').style.display = isCrypto ? 'block' : 'none';
+        
+        const lotsF = document.getElementById('invLots');
+        const qtyF = document.getElementById('invQty');
+        
+        lotsF.disabled = isCrypto;
+        qtyF.disabled = !isCrypto;
+        
+        lotsF.required = !isCrypto;
+        qtyF.required = isCrypto;
+        
+        document.getElementById('invSymbol').placeholder = isCrypto ? 'BTC' : 'BBCA.JK';
+        document.getElementById('invPriceLabel').textContent = isCrypto ? 'Price (IDR/unit)' : 'Price (IDR/share)';
+    }
+
+    // Initialize check on modal load or DOM ready
+    document.addEventListener('DOMContentLoaded', checkCategory);
+
     function initCharts() {
-        if (typeof Chart === 'undefined') {
-            setTimeout(initCharts, 100); return;
-        }
+        if (typeof Chart === 'undefined') { setTimeout(initCharts, 100); return; }
+        Chart.defaults.font.family = "'Inter', sans-serif";
 
-        Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
-        Chart.defaults.color = '#94a3b8';
-
-        // Cashflow Chart
-        const ctxCf = document.getElementById('cashflowChart').getContext('2d');
-        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const cfCtx = document.getElementById('cashflowChart').getContext('2d');
         const data = @json($cashflowData);
-        
-        const gradInc = ctxCf.createLinearGradient(0,0,0,250);
-        gradInc.addColorStop(0, 'rgba(16, 185, 129, 0.2)');
-        gradInc.addColorStop(1, 'rgba(16, 185, 129, 0)');
-        
-        const gradExp = ctxCf.createLinearGradient(0,0,0,250);
-        gradExp.addColorStop(0, 'rgba(244, 63, 94, 0.2)');
-        gradExp.addColorStop(1, 'rgba(244, 63, 94, 0)');
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-        new Chart(ctxCf, {
+        const gInc = cfCtx.createLinearGradient(0,0,0,220);
+        gInc.addColorStop(0,'rgba(16,185,129,0.18)');
+        gInc.addColorStop(1,'rgba(16,185,129,0)');
+        const gExp = cfCtx.createLinearGradient(0,0,0,220);
+        gExp.addColorStop(0,'rgba(244,63,94,0.14)');
+        gExp.addColorStop(1,'rgba(244,63,94,0)');
+
+        new Chart(cfCtx, {
             type: 'line',
             data: {
                 labels: data.map(d => months[d.month-1]),
                 datasets: [
-                    {
-                        label: 'Income', data: data.map(d => d.income),
-                        borderColor: '#10b981', backgroundColor: gradInc,
-                        borderWidth: 3, tension: 0.4, fill: true,
-                        pointBackgroundColor: '#10b981', pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 4
-                    },
-                    {
-                        label: 'Expense', data: data.map(d => d.expense),
-                        borderColor: '#f43f5e', backgroundColor: gradExp,
-                        borderWidth: 3, tension: 0.4, fill: true,
-                        pointBackgroundColor: '#f43f5e', pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 4
-                    }
+                    { label:'Income', data:data.map(d=>d.income), borderColor:'#10b981', backgroundColor:gInc, borderWidth:2.5, tension:0.4, fill:true, pointBackgroundColor:'#10b981', pointBorderColor:'#fff', pointBorderWidth:2, pointRadius:4, pointHoverRadius:6 },
+                    { label:'Expense', data:data.map(d=>d.expense), borderColor:'#f43f5e', backgroundColor:gExp, borderWidth:2.5, tension:0.4, fill:true, pointBackgroundColor:'#f43f5e', pointBorderColor:'#fff', pointBorderWidth:2, pointRadius:4, pointHoverRadius:6 }
                 ]
             },
             options: {
-                responsive: true, maintainAspectRatio: false,
-                interaction: { intersect: false, mode: 'index' },
+                responsive:true, maintainAspectRatio:false,
+                interaction:{ intersect:false, mode:'index' },
                 plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: 'rgba(255,255,255,0.95)', titleColor: '#0f172a', bodyColor: '#475569',
-                        borderColor: '#e2e8f0', borderWidth: 1, padding: 12, boxPadding: 6,
-                        callbacks: { label: c => c.dataset.label + ': Rp ' + new Intl.NumberFormat('id-ID').format(c.parsed.y) }
+                    legend:{ display:false },
+                    tooltip:{ backgroundColor:'#0f172a', titleColor:'#f8fafc', bodyColor:'#94a3b8', borderColor:'#1e293b', borderWidth:1, padding:12, boxPadding:6, cornerRadius:10,
+                        callbacks:{ label: c => c.dataset.label + ': Rp ' + new Intl.NumberFormat('id-ID').format(c.parsed.y) }
                     }
                 },
                 scales: {
-                    x: { grid: { display: false }, ticks: { font: { weight: 600, size: 10 } } },
-                    y: { 
-                        grid: { borderDash: [4,4], color: '#f1f5f9' }, 
-                        border: { display: false },
-                        ticks: { font: { weight: 600, size: 10 }, callback: v => 'Rp ' + (v/1e6).toFixed(0) + 'M' }
-                    }
+                    x:{ grid:{ display:false }, border:{ display:false }, ticks:{ font:{ size:11, weight:'600' }, color:'#94a3b8' } },
+                    y:{ grid:{ color:'rgba(15,23,42,0.06)', borderDash:[4,4] }, border:{ display:false }, ticks:{ font:{ size:11, weight:'600' }, color:'#94a3b8', callback:v => (v/1e6).toFixed(0)+'M' } }
                 }
             }
         });
 
-        // Category Donut
         const catData = @json($categoryBreakdown);
-        new Chart(document.getElementById('categoryChart').getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: catData.map(c => c.name),
-                datasets: [{
-                    data: catData.map(c => c.total),
-                    backgroundColor: catData.map(c => c.color),
-                    borderWidth: 3, borderColor: '#fff', hoverOffset: 4
-                }]
+        const catCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(catCtx, {
+            type:'doughnut',
+            data:{
+                labels: catData.map(c=>c.name),
+                datasets:[{ data:catData.map(c=>c.total), backgroundColor:catData.map(c=>c.color), borderWidth:3, borderColor:'#fff', hoverOffset:6 }]
             },
-            options: {
-                responsive: true, maintainAspectRatio: false, cutout: '75%',
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: 'rgba(255,255,255,0.95)', titleColor: '#0f172a', bodyColor: '#475569',
-                        borderColor: '#e2e8f0', borderWidth: 1, padding: 12,
-                        callbacks: {
-                            label: c => {
-                                const total = c.dataset.data.reduce((a,b) => a+b, 0);
-                                return ' ' + c.label + ': ' + Math.round(c.parsed/total*100) + '%';
-                            }
-                        }
-                    }
-                }
+            options:{
+                responsive:true, maintainAspectRatio:false, cutout:'74%',
+                plugins:{ legend:{ display:false }, tooltip:{ backgroundColor:'#0f172a', titleColor:'#f8fafc', bodyColor:'#94a3b8', borderColor:'#1e293b', borderWidth:1, padding:10, cornerRadius:10 } }
             }
+        });
+
+        const leg = document.getElementById('catLegend');
+        catData.forEach(c => {
+            const div = document.createElement('div');
+            div.style.cssText = 'display:flex;justify-content:space-between;align-items:center;';
+            div.innerHTML = `<div style="display:flex;align-items:center;gap:8px;"><span style="width:8px;height:8px;border-radius:3px;background:${c.color};flex-shrink:0;display:inline-block;"></span><span style="font-size:12.5px;color:var(--text-2);font-weight:500;">${c.name}</span></div><span style="font-size:12px;color:var(--muted);font-weight:600;">${new Intl.NumberFormat('id-ID').format(c.total)}</span>`;
+            leg.appendChild(div);
         });
     }
-
-    document.addEventListener("DOMContentLoaded", initCharts);
+    document.addEventListener('DOMContentLoaded', initCharts);
 </script>
 @endpush
 @endsection

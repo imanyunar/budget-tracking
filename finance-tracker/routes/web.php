@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     // Investments
     Route::get('/investments', [DashboardController::class, 'investments'])->name('investments.index');
     Route::post('/investments', [DashboardController::class, 'storeInvestment'])->name('investments.store');
+    Route::get('/investments/{symbol}/chart', [DashboardController::class, 'getInvestmentChartData'])->name('investments.chart');
     Route::post('/investments/{investment}/sell', [DashboardController::class, 'sellInvestment'])->name('investments.sell');
     Route::put('/investments/{investment}', [DashboardController::class, 'updateInvestment'])->name('investments.update');
     Route::delete('/investments/{investment}', [DashboardController::class, 'destroyInvestment'])->name('investments.destroy');

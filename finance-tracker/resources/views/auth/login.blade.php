@@ -3,272 +3,232 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sign In - FinanceTracker</title>
-    
-    <!-- Fonts -->
+    <title>Sign In — FinanceTracker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Core Assets -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @else
+        <link rel="stylesheet" href="{{ asset('css/tailwind-v4-fallback.css') }}">
+    @endif
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{font-family:'Inter',sans-serif;background:#f8fafc;color:#0f172a;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;}
+        ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px;}
+
+        /* Left panel */
+        .left-panel{
+            flex:1;min-width:0;
+            background:linear-gradient(145deg,#4338ca 0%,#6366f1 40%,#7c3aed 100%);
+            display:flex;flex-direction:column;justify-content:space-between;
+            padding:48px;position:relative;overflow:hidden;
+        }
+        @media(max-width:900px){.left-panel{display:none;}}
+        .left-blob{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none;}
+        .left-logo{display:flex;align-items:center;gap:10px;}
+        .left-logo-mark{width:36px;height:36px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:10px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+        .left-logo-text{font-size:16px;font-weight:800;color:#fff;letter-spacing:-0.03em;}
+        .left-headline{font-size:clamp(32px,3.5vw,48px);font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:1.1;margin-bottom:14px;}
+        .left-sub{font-size:16px;color:rgba(255,255,255,0.7);line-height:1.65;max-width:420px;}
+        .left-feature{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.1);}
+        .left-feature:last-child{border-bottom:none;}
+        .left-feat-icon{width:40px;height:40px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .left-feat-title{font-size:14px;font-weight:700;color:#fff;}
+        .left-feat-sub{font-size:12.5px;color:rgba(255,255,255,0.6);margin-top:1px;}
+        .left-users{display:flex;align-items:center;gap:14px;padding-top:28px;border-top:1px solid rgba(255,255,255,0.15);}
+        .avatar-stack{display:flex;}
+        .avatar-stack img{width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,0.8);margin-left:-8px;}
+        .avatar-stack img:first-child{margin-left:0;}
+        .user-count-label{font-size:12px;font-weight:600;color:rgba(255,255,255,0.8);}
+
+        /* Right panel */
+        .right-panel{
+            width:520px;min-width:320px;
+            background:#fff;
+            display:flex;flex-direction:column;justify-content:center;
+            padding:64px 56px;overflow-y:auto;
+        }
+        @media(max-width:900px){.right-panel{width:100%;padding:40px 28px;}}
+        @media(max-width:480px){.right-panel{padding:32px 20px;}}
+
+        /* Mobile logo */
+        .mobile-logo{display:none;align-items:center;gap:10px;margin-bottom:32px;justify-content:center;}
+        @media(max-width:900px){.mobile-logo{display:flex;}}
+        .mobile-logo-mark{width:36px;height:36px;background:linear-gradient(135deg,#6366f1,#4f46e5);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(99,102,241,0.35);}
+
+        .form-title{font-size:26px;font-weight:800;letter-spacing:-0.03em;margin-bottom:6px;}
+        .form-sub{font-size:14px;color:#64748b;margin-bottom:32px;}
+
+        .error-box{padding:13px 16px;background:#fff1f2;border:1px solid #fecdd3;border-radius:10px;margin-bottom:20px;display:flex;align-items:flex-start;gap:10px;}
+        .error-box-text{font-size:13.5px;color:#e11d48;font-weight:500;}
+
+        .form-group{margin-bottom:16px;}
+        .form-label{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;color:#475569;margin-bottom:6px;}
+        .form-label a{font-size:12px;color:#6366f1;text-decoration:none;font-weight:500;}
+        .form-label a:hover{text-decoration:underline;}
+        .input-wrap{position:relative;}
+        .input-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#94a3b8;width:16px;height:16px;pointer-events:none;}
+        .form-input{
+            width:100%;padding:10px 13px 10px 40px;
+            background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;
+            font-size:14px;font-family:'Inter',sans-serif;color:#0f172a;
+            outline:none;transition:border-color 0.15s,box-shadow 0.15s;
+        }
+        .form-input:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,0.12);}
+        .form-input::placeholder{color:#94a3b8;}
+        .pwd-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;padding:2px;line-height:0;}
+        .pwd-toggle:hover{color:#6366f1;}
+
+        .remember-row{display:flex;align-items:center;gap:8px;margin-bottom:22px;}
+        .remember-row input{accent-color:#6366f1;width:16px;height:16px;cursor:pointer;}
+        .remember-row label{font-size:13.5px;color:#64748b;cursor:pointer;}
+
+        .btn-submit{
+            width:100%;padding:12px;
+            background:linear-gradient(135deg,#6366f1,#4f46e5);
+            color:#fff;font-weight:700;font-size:14.5px;
+            border:none;border-radius:10px;cursor:pointer;
+            transition:all 0.2s;letter-spacing:-0.01em;
+            box-shadow:0 3px 10px rgba(99,102,241,0.35);
+        }
+        .btn-submit:hover{box-shadow:0 6px 18px rgba(99,102,241,0.45);transform:translateY(-1px);}
+        .btn-submit:active{transform:translateY(0);}
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen selection:bg-indigo-500 selection:text-white flex text-slate-900 antialiased overflow-hidden">
-    
-    <!-- Left: Branding Panel -->
-    <div class="hidden lg:flex flex-col flex-1 w-full bg-indigo-900 relative overflow-hidden text-white pt-12 pb-16 px-16 xl:px-24 animate-fade-in-up" style="animation-duration: 0.7s;">
-        <!-- Abstract Decoration -->
-        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-        <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-indigo-500/20 to-blue-500/20 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4"></div>
+<body>
 
-        <div class="relative z-10 flex flex-col h-full justify-between">
-            <!-- Logo -->
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/20">
-                    <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-5 h-5 text-indigo-300"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
-</svg>
+    <!-- Left Branding Panel -->
+    <div class="left-panel">
+        <!-- Background blobs -->
+        <div class="left-blob" style="width:500px;height:500px;background:rgba(255,255,255,0.06);top:-150px;right:-100px;"></div>
+        <div class="left-blob" style="width:400px;height:400px;background:rgba(124,58,237,0.3);bottom:-100px;left:-100px;"></div>
 
-                </div>
-                <span class="text-xl font-extrabold tracking-tight">FinanceTracker</span>
+        <!-- Logo -->
+        <div class="left-logo">
+            <div class="left-logo-mark">
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
             </div>
+            <span class="left-logo-text">FinanceTracker</span>
+        </div>
 
-            <div class="max-w-xl">
-                <h1 class="text-4xl xl:text-5xl font-black leading-tight mb-6">
-                    Master your money.<br>
-                    <span class="text-indigo-300">Design your life.</span>
-                </h1>
-                <p class="text-indigo-200/80 text-lg font-medium leading-relaxed mb-12 max-w-md">
-                    Track every expense, optimize your budgets, and monitor your investments—all in one beautiful dashboard.
-                </p>
+        <!-- Main copy -->
+        <div>
+            <h1 class="left-headline">Master your money.<br>Design your future.</h1>
+            <p class="left-sub">Track every expense, optimize your budgets, and monitor your investments — all in one beautiful dashboard.</p>
 
-                <!-- Features -->
-                <div class="space-y-5">
-                    @foreach([
-                        ['icon' => 'line-chart', 'title' => 'Real-time Analytics', 'desc' => 'Understand your cashflow instantly'],
-                        ['icon' => 'target', 'title' => 'Smart Budgeting', 'desc' => 'Set limits and stay on track automatically'],
-                        ['icon' => 'shield-check', 'title' => 'Bank-level Security', 'desc' => 'Your financial data is private and secure']
-                    ] as $feat)
-                    <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center backdrop-blur-sm border border-white/10 shrink-0">
-                            <x-icon name="{{ $feat['icon'] }}" class="w-5 h-5 text-indigo-300" />
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-white">{{ $feat['title'] }}</h3>
-                            <p class="text-sm font-medium text-indigo-200/70 mt-0.5">{{ $feat['desc'] }}</p>
-                        </div>
+            <div style="margin-top:36px;">
+                <div class="left-feature">
+                    <div class="left-feat-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                     </div>
-                    @endforeach
+                    <div>
+                        <div class="left-feat-title">Real-time Analytics</div>
+                        <div class="left-feat-sub">Understand your cashflow at a glance</div>
+                    </div>
+                </div>
+                <div class="left-feature">
+                    <div class="left-feat-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <div>
+                        <div class="left-feat-title">Smart Budgeting</div>
+                        <div class="left-feat-sub">Set limits and get alerts automatically</div>
+                    </div>
+                </div>
+                <div class="left-feature">
+                    <div class="left-feat-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <div>
+                        <div class="left-feat-title">Fully Private</div>
+                        <div class="left-feat-sub">Your data stays on your server</div>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Testimonial placeholder -->
-            <div class="mt-12 pt-8 border-t border-white/10 flex items-center gap-4">
-                <div class="flex -space-x-2">
-                    <img class="w-10 h-10 rounded-full border-2 border-indigo-900" src="https://i.pravatar.cc/100?img=1" alt="Avatar">
-                    <img class="w-10 h-10 rounded-full border-2 border-indigo-900" src="https://i.pravatar.cc/100?img=2" alt="Avatar">
-                    <img class="w-10 h-10 rounded-full border-2 border-indigo-900" src="https://i.pravatar.cc/100?img=3" alt="Avatar">
+        <!-- Social proof -->
+        <div class="left-users">
+            <div class="avatar-stack">
+                <img src="https://i.pravatar.cc/100?img=1" alt="">
+                <img src="https://i.pravatar.cc/100?img=2" alt="">
+                <img src="https://i.pravatar.cc/100?img=3" alt="">
+                <img src="https://i.pravatar.cc/100?img=4" alt="">
+            </div>
+            <div>
+                <div style="display:flex;gap:2px;color:#fbbf24;margin-bottom:2px;">
+                    @for($i=0;$i<5;$i++)<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>@endfor
                 </div>
-                <div>
-                    <div class="flex text-amber-400">
-                        @for($i=0; $i<5; $i++) <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-3 h-3 fill-current"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" />
-</svg>
- @endfor
-                    </div>
-                    <p class="text-xs font-bold text-indigo-200 mt-1">Trusted by 10,000+ users</p>
-                </div>
+                <div class="user-count-label">Trusted by thousands of users</div>
             </div>
         </div>
     </div>
 
-    <!-- Right: Login Form -->
-    <div class="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-16 xl:px-24 w-full max-w-[600px] mx-auto overflow-y-auto animate-fade-in-up">
-        
-        <!-- Mobile Logo -->
-        <div class="lg:hidden flex items-center gap-3 mb-10 mx-auto">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-5 h-5 text-white"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
-</svg>
-
+    <!-- Right Form Panel -->
+    <div class="right-panel">
+        <!-- Mobile logo -->
+        <div class="mobile-logo">
+            <div class="mobile-logo-mark">
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
             </div>
-            <span class="text-2xl font-black text-slate-900 tracking-tight">FinanceTracker</span>
+            <span style="font-size:18px;font-weight:800;letter-spacing:-0.03em;">FinanceTracker</span>
         </div>
 
-        <div class="mb-10 text-center lg:text-left">
-            <h2 class="text-3xl font-black text-slate-900">Welcome Back</h2>
-            <p class="text-sm font-medium text-slate-500 mt-2">Sign in to your account to continue</p>
-        </div>
+        <div class="form-title">Welcome back 👋</div>
+        <div class="form-sub">Sign in to your account to continue</div>
 
-        @if ($errors->any())
-        <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 flex flex-col gap-1">
-            <div class="flex items-center gap-2 text-rose-800">
-                <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-4 h-4"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <circle cx="12" cy="12" r="10" />
-  <line x1="12" x2="12" y1="8" y2="12" />
-  <line x1="12" x2="12.01" y1="16" y2="16" />
-</svg>
-
-                <h3 class="text-sm font-bold">Authentication failed</h3>
-            </div>
-            <p class="text-sm font-medium text-rose-600 ml-6">{{ $errors->first() }}</p>
+        @if($errors->any())
+        <div class="error-box">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+            <div class="error-box-text">{{ $errors->first() }}</div>
         </div>
         @endif
 
-        <form method="POST" action="/login" class="space-y-5">
+        <form method="POST" action="/login">
             @csrf
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 pl-1">Email <span class="text-rose-500">*</span></label>
-                <div class="relative group">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-5 h-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
-  <rect x="2" y="4" width="20" height="16" rx="2" />
-</svg>
-
-                    </div>
-                    <input type="email" name="email" required value="{{ old('email') }}" 
-                           placeholder="you@example.com"
-                           class="block w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none" 
-                           autocomplete="email">
+            <!-- Email -->
+            <div class="form-group">
+                <div class="form-label"><span>Email Address</span></div>
+                <div class="input-wrap">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+                    <input type="email" name="email" required value="{{ old('email') }}" placeholder="you@example.com" class="form-input" autocomplete="email">
                 </div>
             </div>
 
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 pl-1 flex justify-between">
-                    <span>Password <span class="text-rose-500">*</span></span>
-                    <a href="#" class="text-indigo-600 hover:text-indigo-700 capitalize tracking-normal">Forgot?</a>
-                </label>
-                <div class="relative group">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-5 h-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-</svg>
-
-                    </div>
-                    <input type="password" name="password" required 
-                           placeholder="••••••••" id="pwd"
-                           class="block w-full pl-11 pr-12 py-3.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none" 
-                           autocomplete="current-password">
-                    <button type="button" onclick="togglePwd()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none">
-                        <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-5 h-5"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
-  <circle cx="12" cy="12" r="3" />
-</svg>
-
+            <!-- Password -->
+            <div class="form-group">
+                <div class="form-label">
+                    <span>Password</span>
+                    <a href="#">Forgot password?</a>
+                </div>
+                <div class="input-wrap">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <input type="password" name="password" required id="pwdInput" placeholder="••••••••" class="form-input" style="padding-right:42px;" autocomplete="current-password">
+                    <button type="button" class="pwd-toggle" onclick="togglePwd()" id="pwdToggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
                 </div>
             </div>
 
-            <div class="flex items-center mt-2">
-                <input id="remember" type="checkbox" name="remember" class="w-4 h-4 text-indigo-600 bg-slate-100 border-slate-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer">
-                <label for="remember" class="ml-2 text-sm font-medium text-slate-600 cursor-pointer">Remember me for 30 days</label>
+            <!-- Remember -->
+            <div class="remember-row">
+                <input type="checkbox" name="remember" id="remember">
+                <label for="remember">Remember me for 30 days</label>
             </div>
 
-            <button type="submit" 
-                    class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold rounded-xl mt-4 shadow-lg shadow-indigo-500/25 transition-all hover:-translate-y-0.5 active:translate-y-0">
-                Sign In
-            </button>
+            <button type="submit" class="btn-submit">Sign In</button>
         </form>
 
-
-        
+        <div style="text-align:center;margin-top:28px;font-size:12.5px;color:#94a3b8;">
+            © {{ date('Y') }} FinanceTracker · Built for clarity
+        </div>
     </div>
 
     <script>
         function togglePwd() {
-            const pwd = document.getElementById('pwd');
-            const icon = document.getElementById('eye-icon');
-            if (pwd.type === 'password') {
-                pwd.type = 'text';
-                icon.setAttribute('data-lucide', 'eye-off');
-            } else {
-                pwd.type = 'password';
-                icon.setAttribute('data-lucide', 'eye');
-            }
-            }
+            const pwd = document.getElementById('pwdInput');
+            pwd.type = pwd.type === 'password' ? 'text' : 'password';
+        }
     </script>
 </body>
 </html>

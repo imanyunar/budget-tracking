@@ -1,210 +1,172 @@
 @extends('layouts.app')
 
-@section('title', 'Settings - FinanceTracker')
+@section('title', 'Settings · FinanceTracker')
 
 @section('content')
-<div class="max-w-4xl mx-auto space-y-6">
+<style>
+    .settings-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:var(--shadow-sm); }
+    .settings-card-header { padding:16px 22px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; background:var(--surface-2); }
+    .settings-card-body { padding:22px; }
+    .section-icon { width:36px; height:36px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--border); }
+    .toggle-row:last-child { border-bottom:none; }
+    .toggle-label { font-size:13.5px; font-weight:500; color:var(--text); }
+    .toggle-sublabel { font-size:11.5px; color:var(--muted); margin-top:2px; }
+    .toggle-switch { position:relative; width:42px; height:24px; flex-shrink:0; cursor:pointer; }
+    .toggle-switch input { opacity:0; width:0; height:0; position:absolute; }
+    .toggle-track { position:absolute; inset:0; border-radius:12px; background:var(--border-2); transition:all 0.2s; cursor:pointer; }
+    .toggle-thumb { position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:all 0.2s; box-shadow:0 1px 4px rgba(0,0,0,0.12); }
+    .toggle-switch input:checked ~ .toggle-track { background:var(--primary); }
+    .toggle-switch input:checked ~ .toggle-track .toggle-thumb { transform:translateX(18px); }
+    .danger-zone { background:rgba(244,63,94,0.04); border:1px solid rgba(244,63,94,0.18); border-radius:14px; padding:20px 22px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+</style>
+
+<div style="max-width:800px;margin:0 auto;display:flex;flex-direction:column;gap:16px;">
 
     <!-- Header -->
-    <form action="{{ route('settings.update') }}" method="POST" class="space-y-6">
-        @csrf
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-                <h1 class="text-2xl font-black text-slate-900 tracking-tight">System Settings</h1>
-                <p class="text-sm text-slate-500 font-medium">Configure your personal preferences and system settings.</p>
-            </div>
-            <div class="flex gap-3 w-full md:w-auto">
-            <button type="submit" class="flex-1 md:flex-none flex items-center justify-center gap-2.5 px-6 py-3 bg-gradient-to-r from-indigo-600 via-indigo-700 to-violet-700 text-white text-sm font-black rounded-xl hover:shadow-[0_10px_20px_-10px_rgba(79,70,229,0.5)] transition-all hover:-translate-y-0.5 active:scale-95 group">
-                <svg class="w-4 h-4 transition-transform group-hover:rotate-12"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
-                  <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
-                  <path d="M7 3v4a1 1 0 0 0 1 1h7" />
-                </svg>
-                <span>Save Configuration</span>
-            </button>
-        </div>
+    <div>
+        <h1 class="page-title-main">Settings</h1>
+        <p class="page-title-sub">Personal preferences & configuration</p>
     </div>
 
-    <div class="space-y-6">
-        <!-- Account Profile -->
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-10 flex flex-col md:flex-row items-center gap-6 md:gap-10">
-            <div class="relative group shrink-0">
-                <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50">
-                    <img id="avatarPreview" src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ $user->avatar_seed ?? $user->name }}" alt="Profile" class="w-full h-full object-cover">
+    <form action="{{ route('settings.update') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+
+        <!-- Profile Card -->
+        <div class="settings-card" style="margin-bottom:16px;">
+            <div class="settings-card-header">
+                <div class="section-icon" style="background:var(--primary-dim);border:1px solid var(--primary-mid);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </div>
-                <input type="hidden" name="avatar_seed" id="avatarSeed" value="{{ $user->avatar_seed }}">
-                <button type="button" onclick="randomizeAvatar()" class="absolute -bottom-3 -right-3 p-3 bg-white text-indigo-600 rounded-2xl shadow-xl shadow-slate-200/50 hover:bg-slate-50 transition-all border border-slate-200 group-hover:scale-110 active:scale-95 group/btn">
-                    <svg class="w-5 h-5 transition-transform group-hover/btn:rotate-12"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" />
-                      <circle cx="12" cy="13" r="3" />
-                    </svg>
+                <div style="flex:1;">
+                    <div style="font-size:14px;font-weight:700;color:var(--text);">Profile Identity</div>
+                    <div style="font-size:12px;color:var(--muted);margin-top:1px;">User account details</div>
+                </div>
+                <button type="submit" class="btn-primary" style="padding:9px 18px;font-size:13px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+                    Save Changes
                 </button>
             </div>
-            
-            <div class="flex-1 text-center md:text-left w-full">
-                <h3 class="text-2xl font-bold text-slate-900 mb-1">{{ Auth::user()->name }}</h3>
-                <p class="text-[10px] text-indigo-600 font-bold uppercase tracking-widest mb-6">Premium Membership Status</p>
-                
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 bg-slate-50 border border-slate-100 rounded-2xl p-4 sm:p-5">
-                    <div class="flex flex-col">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Status</span>
-                        <span class="text-lg font-black text-emerald-600">Active Account</span>
+            <div class="settings-card-body" style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+                <!-- Avatar -->
+                <div style="position:relative;flex-shrink:0;">
+                    <div style="width:80px;height:80px;border-radius:14px;overflow:hidden;border:2px solid var(--border);box-shadow:var(--shadow-sm);">
+                        <img id="avatarPreview" src="{{ isset($user->settings['avatar_path']) ? asset('storage/' . $user->settings['avatar_path']) : 'https://api.dicebear.com/7.x/initials/svg?seed='.urlencode($user->name).'&backgroundColor=6366f1&textColor=ffffff' }}" alt="" style="width:100%;height:100%;object-fit:cover;">
                     </div>
-                    <div class="flex flex-col">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Security</span>
-                        <span class="text-lg font-black text-indigo-600">Verified</span>
+                    <input type="hidden" name="avatar_seed" id="avatarSeed" value="{{ $user->avatar_seed }}">
+                    <input type="file" name="avatar_image" id="avatarUpload" accept="image/*" onchange="previewAvatar(event)" style="display:none;">
+                    <button type="button" onclick="document.getElementById('avatarUpload').click()" style="position:absolute;bottom:-8px;right:-8px;width:28px;height:28px;border-radius:8px;background:var(--surface);border:1.5px solid var(--border);color:var(--text-2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;box-shadow:var(--shadow-sm);" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-2)'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                    </button>
+                </div>
+                <!-- Info -->
+                <div style="flex:1;min-width:200px;">
+                    <div style="font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.02em;">{{ Auth::user()->name }}</div>
+                    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+                        <span class="badge badge-up">Active</span>
+                        <span class="badge badge-blue">Verified</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- General Config -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-8">
-                <div class="flex items-center gap-4 border-b border-slate-100 pb-4">
-                    <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl border border-indigo-100">
-                        <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-5 h-5"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-  <circle cx="12" cy="7" r="4" />
-</svg>
+        <!-- Two column -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;">
 
+            <!-- Personal Info -->
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="section-icon" style="background:var(--blue-dim);border:1px solid rgba(59,130,246,0.2);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-900">Personal Identity</h3>
+                    <div>
+                        <div style="font-size:14px;font-weight:700;color:var(--text);">Personal Info</div>
+                        <div style="font-size:12px;color:var(--muted);margin-top:1px;">Identity data</div>
+                    </div>
                 </div>
-                
-                <div class="space-y-4">
+                <div class="settings-card-body" style="display:flex;flex-direction:column;gap:14px;">
                     <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 ml-1">Display Username</label>
-                        <input type="text" name="name" value="{{ $user->name }}" 
-                               class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none font-bold text-slate-800">
+                        <label class="input-label">Display Name</label>
+                        <input type="text" name="name" value="{{ $user->name }}" class="input-field">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 ml-1">Professional Email</label>
-                        <input type="email" value="{{ Auth::user()->email }}" 
-                               class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none font-bold text-slate-800" readonly disabled>
+                        <label class="input-label">Email Address</label>
+                        <input type="email" value="{{ Auth::user()->email }}" class="input-field" readonly disabled style="opacity:0.5;cursor:not-allowed;background:var(--surface-2);">
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-8">
-                <div class="flex items-center gap-4 border-b border-slate-100 pb-4">
-                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100">
-                        <!-- @license lucide-static v0.577.0 - ISC -->
-<svg class="w-5 h-5"
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
->
-  <path d="M10.268 21a2 2 0 0 0 3.464 0" />
-  <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
-</svg>
-
+            <!-- Alert Config -->
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="section-icon" style="background:var(--warn-dim);border:1px solid rgba(245,158,11,0.2);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-900">Alert Strategy</h3>
+                    <div>
+                        <div style="font-size:14px;font-weight:700;color:var(--text);">Notifications</div>
+                        <div style="font-size:12px;color:var(--muted);margin-top:1px;">Alert configuration</div>
+                    </div>
                 </div>
-                
-                <div class="space-y-6">
-                    <label class="flex items-center justify-between group cursor-pointer">
-                        <div class="flex flex-col">
-                            <span class="text-sm font-bold text-slate-800">Daily Budget Report</span>
-                            <span class="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">Push Notifications</span>
+                <div class="settings-card-body">
+                    <div class="toggle-row">
+                        <div>
+                            <div class="toggle-label">Daily Budget Report</div>
+                            <div class="toggle-sublabel">Push notifications</div>
                         </div>
-                        <div class="relative inline-block w-12 h-6 transition duration-200 ease-in-out rounded-full pointer-events-none">
-                            <input type="checkbox" name="daily_report" value="1" {{ ($user->settings['daily_report'] ?? true) ? 'checked' : '' }}
-                                class="sr-only peer">
-                            <div class="w-12 h-6 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 transition-colors duration-200"></div>
-                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 peer-checked:translate-x-6"></div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="daily_report" value="1" {{ ($user->settings['daily_report'] ?? true) ? 'checked' : '' }}>
+                            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                        </label>
+                    </div>
+                    <div class="toggle-row">
+                        <div>
+                            <div class="toggle-label">Stock Market Alerts</div>
+                            <div class="toggle-sublabel">Critical priority only</div>
                         </div>
-                    </label>
-                    <label class="flex items-center justify-between group cursor-pointer">
-                        <div class="flex flex-col">
-                            <span class="text-sm font-bold text-slate-800">Stock Market Alerts</span>
-                            <span class="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">Critical Priority ONLY</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="stock_alerts" value="1" {{ ($user->settings['stock_alerts'] ?? false) ? 'checked' : '' }}>
+                            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                        </label>
+                    </div>
+                    <div class="toggle-row">
+                        <div>
+                            <div class="toggle-label">Multi-Currency Export</div>
+                            <div class="toggle-sublabel">Spreadsheet compatible</div>
                         </div>
-                        <div class="relative inline-block w-12 h-6 transition duration-200 ease-in-out rounded-full pointer-events-none">
-                            <input type="checkbox" name="stock_alerts" value="1" {{ ($user->settings['stock_alerts'] ?? false) ? 'checked' : '' }}
-                                class="sr-only peer">
-                            <div class="w-12 h-6 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 transition-colors duration-200"></div>
-                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 peer-checked:translate-x-6"></div>
-                        </div>
-                    </label>
-                    <label class="flex items-center justify-between group cursor-pointer">
-                        <div class="flex flex-col">
-                            <span class="text-sm font-bold text-slate-800">Multi-Currency Export</span>
-                            <span class="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">Spreadsheet Compatible</span>
-                        </div>
-                        <div class="relative inline-block w-12 h-6 transition duration-200 ease-in-out rounded-full pointer-events-none">
-                            <input type="checkbox" name="spreadsheet_compat" value="1" {{ ($user->settings['spreadsheet_compat'] ?? true) ? 'checked' : '' }}
-                                class="sr-only peer">
-                            <div class="w-12 h-6 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 transition-colors duration-200"></div>
-                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 peer-checked:translate-x-6"></div>
-                        </div>
-                    </label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="spreadsheet_compat" value="1" {{ ($user->settings['spreadsheet_compat'] ?? true) ? 'checked' : '' }}>
+                            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
     </form>
 
     <!-- Danger Zone -->
-        <div class="bg-rose-50 rounded-2xl border border-rose-200 p-6 sm:p-8">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                    <h3 class="text-lg font-bold text-rose-700">System Destruction</h3>
-                    <p class="text-xs text-rose-600/80 mt-1 font-medium">This will permanently delete all your financial records and ledger history.</p>
-                </div>
-                <form action="{{ route('settings.clear') }}" method="POST" onsubmit="return confirm('WARNING: This will delete ALL transactions and reset balances. Proceed?')">
-                    @csrf
-                    <button type="submit" class="w-full md:w-auto px-6 py-3 bg-white border-2 border-rose-200 hover:border-rose-400 text-[10px] font-black uppercase tracking-[0.2em] text-rose-600 rounded-xl transition-all hover:bg-rose-50 hover:shadow-md active:scale-95">
-                        Clear Financial Workspace
-                    </button>
-                </form>
-            </div>
+    <div class="danger-zone">
+        <div>
+            <div style="font-size:14.5px;font-weight:700;color:var(--danger);">Danger Zone</div>
+            <div style="font-size:12.5px;color:rgba(244,63,94,0.65);margin-top:4px;">Permanently delete all financial records and reset all balances.</div>
         </div>
+        <form action="{{ route('settings.clear') }}" method="POST" onsubmit="return confirm('WARNING: This will delete ALL transactions and reset balances. This cannot be undone.')">
+            @csrf
+            <button type="submit" class="btn-danger">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                Clear All Data
+            </button>
+        </form>
     </div>
 </div>
 
 <script>
-    function randomizeAvatar() {
-        const seed = Math.random().toString(36).substring(7);
-        document.getElementById('avatarSeed').value = seed;
-        document.getElementById('avatarPreview').src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
+    function previewAvatar(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = e => { document.getElementById('avatarPreview').src = e.target.result; };
+            reader.readAsDataURL(file);
+        }
     }
 </script>
 @endsection

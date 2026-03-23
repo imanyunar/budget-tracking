@@ -1,228 +1,174 @@
 @extends('layouts.app')
 
-@section('title', 'Wallets - FinanceTracker')
+@section('title', 'Wallets · FinanceTracker')
 
 @section('content')
-<div class="space-y-6">
+<style>
+    .wallet-card {
+        background:var(--surface); border:1px solid var(--border);
+        border-radius:16px; padding:22px;
+        box-shadow:var(--shadow-sm); transition:all 0.25s;
+        position:relative; overflow:hidden; display:flex; flex-direction:column;
+    }
+    .wallet-card:hover { box-shadow:var(--shadow); transform:translateY(-2px); border-color:var(--border-2); }
+    .add-wallet-card {
+        border:1.5px dashed var(--border-2); border-radius:16px; padding:22px;
+        display:flex; flex-direction:column; align-items:center; justify-content:center;
+        min-height:220px; cursor:pointer; transition:all 0.2s;
+        color:var(--muted); background:transparent;
+    }
+    .add-wallet-card:hover { border-color:var(--primary); color:var(--primary); background:var(--primary-dim); }
+    .summary-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px 22px; box-shadow:var(--shadow-sm); }
+</style>
+
+<div style="display:flex;flex-direction:column;gap:20px;">
 
     <!-- Header -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div class="page-header">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Your Wallets</h1>
-            <p class="text-sm text-slate-500 font-medium">Manage and monitor all your storage entities.</p>
+            <h1 class="page-title-main">Your Wallets</h1>
+            <p class="page-title-sub">Manage all your financial accounts</p>
         </div>
-        <div class="flex gap-3 w-full md:w-auto">
-            <button onclick="openWalletModal()" class="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-bold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
-                <x-icon name="plus" class="w-4 h-4" /> Create Wallet
-            </button>
+        <button onclick="openCreateModal()" class="btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+            Create Wallet
+        </button>
+    </div>
+
+    <!-- Summary Strip -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+        <div class="summary-card">
+            <div style="font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;">Total All Assets</div>
+            <div style="font-size:25px;font-weight:800;color:var(--primary);letter-spacing:-0.03em;">{{ number_format($totalAssets, 0, ',', '.') }}</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px;">IDR · Wallets + Investments</div>
+        </div>
+        <div class="summary-card">
+            <div style="font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;">Liquid Balance</div>
+            <div style="font-size:25px;font-weight:800;color:var(--text);letter-spacing:-0.03em;">{{ number_format($totalWallet, 0, ',', '.') }}</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px;">IDR · Cash & bank wallets</div>
         </div>
     </div>
 
-    <!-- Summary -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-indigo-900 rounded-2xl p-6 text-white relative overflow-hidden">
-            <div class="absolute -right-4 -top-4 w-32 h-32 bg-indigo-800 rounded-full blur-2xl"></div>
-            <div class="relative z-10">
-                <p class="text-[10px] font-bold uppercase tracking-widest text-indigo-300 mb-1">Total All Assets</p>
-                <h3 class="text-3xl font-black mb-2">IDR {{ number_format($totalAssets, 0, ',', '.') }}</h3>
-                <p class="text-xs text-indigo-200">Combined value of wallets and investments.</p>
-            </div>
-        </div>
-        <div class="bg-white rounded-2xl p-6 text-slate-900 border border-slate-200 shadow-sm relative overflow-hidden">
-            <div class="absolute -right-4 -top-4 w-32 h-32 bg-emerald-50 rounded-full blur-2xl"></div>
-            <div class="relative z-10">
-                <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Total Wallet Balance</p>
-                <h3 class="text-3xl font-black text-emerald-600 mb-2">IDR {{ number_format($totalWallet, 0, ',', '.') }}</h3>
-                <p class="text-xs text-slate-500">Liquid cash and bank balances.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Wallet Grid -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:14px;">
         @foreach($portfolios as $portfolio)
-        <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group relative overflow-hidden flex flex-col">
-            
-            <!-- Decoration -->
-            <div class="absolute -right-12 -top-12 opacity-[0.03] scale-150 rotate-12 transition-transform duration-500 group-hover:rotate-0 group-hover:scale-[1.6]">
-                <x-icon name="{{ $portfolio->icon ?: 'wallet' }}" class="w-48 h-48" style="color: {{ $portfolio->color }}" />
-            </div>
-            
-            <div class="relative z-10 flex items-start justify-between mb-8">
-                <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-colors shadow-sm" style="background: {{ $portfolio->color }}15; border: 1px solid {{ $portfolio->color }}30">
-                    <x-icon name="{{ $portfolio->icon ?: 'wallet' }}" class="w-7 h-7" style="color: {{ $portfolio->color }}" />
+        <div class="wallet-card">
+            <!-- Gradient tint bg -->
+            <div style="position:absolute;inset:0;background:radial-gradient(circle at top right,{{ $portfolio->color }}12 0%,transparent 60%);pointer-events:none;"></div>
+            <!-- Top accent line -->
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:{{ $portfolio->color }};border-radius:16px 16px 0 0;"></div>
+
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;position:relative;">
+                <div style="width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:{{ $portfolio->color }}18;border:1px solid {{ $portfolio->color }}30;">
+                    <x-icon name="{{ $portfolio->icon ?: 'wallet' }}" style="width:19px;height:19px;color:{{ $portfolio->color }}" />
                 </div>
-                <div class="text-right">
-                    <span class="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-100">
-                        Active
-                    </span>
-                </div>
+                <span class="badge badge-up" style="font-size:10px;">ACTIVE</span>
             </div>
-            
-            <div class="relative z-10 flex-1">
-                <h3 class="text-xl font-bold text-slate-800">{{ $portfolio->name }}</h3>
-                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-1">{{ $portfolio->currency }} Asset Storage</p>
-                <div class="mt-6 flex flex-col">
-                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Total Assets (IDR)</span>
-                    <span class="text-3xl font-black text-slate-900">{{ number_format($portfolio->balance, 0, ',', '.') }}</span>
+
+            <div style="flex:1;position:relative;">
+                <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px;">{{ $portfolio->name }}</div>
+                <div style="font-size:12px;color:var(--muted);">{{ $portfolio->currency }}</div>
+                <div style="margin-top:14px;">
+                    <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px;">Balance</div>
+                    <div style="font-size:24px;font-weight:800;color:var(--text);letter-spacing:-0.03em;">{{ number_format($portfolio->balance, 0, ',', '.') }}</div>
                 </div>
             </div>
 
-            <div class="relative z-10 mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
-                <form action="{{ route('wallets.destroy', $portfolio->id) }}" method="POST" onsubmit="return confirm('WARNING: You can only delete this wallet if there are no transactions linked to it. Proceed?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="text-xs font-bold text-rose-500 hover:text-rose-700 transition-colors flex items-center gap-1 p-1 hover:bg-rose-50 rounded">
-                        <x-icon name="trash-2" class="w-4 h-4" /> Delete
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding-top:14px;border-top:1px solid var(--border);position:relative;">
+                <form action="{{ route('wallets.destroy', $portfolio->id) }}" method="POST" onsubmit="return confirm('Delete wallet? Only possible if no transactions linked.')">
+                    @csrf @method('DELETE')
+                    <button type="submit" class="btn-danger" style="padding:6px 10px;font-size:12px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                        Delete
                     </button>
                 </form>
-                <div class="flex items-center gap-2">
-                    <button onclick="openEditModal({{ $portfolio->id }}, '{{ addslashes($portfolio->name) }}', {{ $portfolio->balance }})"
-                        class="text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors flex items-center gap-1 bg-slate-50 px-3 py-1.5 rounded-lg hover:bg-slate-100">
-                        <x-icon name="pencil" class="w-3.5 h-3.5" /> Edit
+                <div style="display:flex;gap:8px;">
+                    <button onclick="openEditModal({{ $portfolio->id }}, '{{ addslashes($portfolio->name) }}', {{ $portfolio->balance }})" class="btn-secondary" style="padding:7px 12px;font-size:12.5px;">
+                        Edit
                     </button>
-                    <a href="{{ route('wallets.show', $portfolio->id) }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100">
-                        Detail <x-icon name="arrow-right" class="w-3.5 h-3.5" />
+                    <a href="{{ route('wallets.show', $portfolio->id) }}" class="btn-primary" style="padding:7px 14px;font-size:12.5px;">
+                        Detail →
                     </a>
                 </div>
             </div>
         </div>
         @endforeach
 
-        <!-- Quick Add Card -->
-        <div onclick="openWalletModal()" class="bg-slate-50 border-2 border-dashed border-slate-300 rounded-2xl p-8 flex flex-col items-center justify-center text-slate-500 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50/50 cursor-pointer transition-all group min-h-[300px]">
-            <div class="w-14 h-14 rounded-full border-2 border-current flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <x-icon name="plus" class="w-6 h-6" />
+        <!-- Add Card -->
+        <div class="add-wallet-card" onclick="openCreateModal()">
+            <div style="width:46px;height:46px;border-radius:12px;border:1.5px dashed currentColor;display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
             </div>
-            <span class="text-sm font-bold">Add New Storage</span>
+            <div style="font-size:13.5px;font-weight:600;">Add New Wallet</div>
+            <div style="font-size:12px;margin-top:4px;opacity:0.7;">Bank, e-wallet, cash</div>
         </div>
     </div>
 </div>
 
-<!-- Modal: Create Wallet -->
-<div id="walletModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
-    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeWalletModal()"></div>
-    
-    <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 relative z-10 shadow-2xl shadow-indigo-500/10 border border-slate-100 transform scale-95 opacity-0 transition-all duration-200" id="walletModalContent">
-        <button onclick="closeWalletModal()" class="absolute top-6 right-6 p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-colors">
-            <x-icon name="x" class="w-5 h-5" />
-        </button>
-
-        <div class="mb-6">
-            <h2 class="text-xl font-black text-slate-900">Create Wallet</h2>
-            <p class="text-sm font-medium text-slate-500 mt-0.5">Define a new financial storage entity</p>
+<!-- Create Wallet Modal -->
+<div id="createModal" class="modal-overlay" onclick="if(event.target===this)closeCreateModal()">
+    <div class="modal-box" id="createModalBox">
+        <div class="modal-header">
+            <div><div class="modal-title">Create Wallet</div><div class="modal-subtitle">Define a new financial account</div></div>
+            <button class="modal-close" onclick="closeCreateModal()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>
         </div>
-        
-        <form action="{{ route('wallets.store') }}" method="POST" class="space-y-4">
+        <form action="{{ route('wallets.store') }}" method="POST">
             @csrf
-            <div>
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 ml-1">Wallet Name</label>
-                <input type="text" name="name" required placeholder="e.g. Personal Bank, Crypto Wallet" 
-                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none">
+            <div style="display:flex;flex-direction:column;gap:14px;">
+                <div><label class="input-label">Wallet Name</label><input type="text" name="name" required placeholder="e.g. BCA, GoPay, Cash" class="input-field"></div>
+                <div><label class="input-label">Initial Balance (IDR)</label><input type="number" name="balance" required placeholder="0" class="input-field"></div>
+                <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:12px;margin-top:4px;">Create Wallet</button>
             </div>
-
-            <div>
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 ml-1">Initial Balance (IDR)</label>
-                <input type="number" name="balance" required placeholder="0" 
-                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none font-bold">
-            </div>
-
-            <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold rounded-xl mt-2 hover:shadow-lg hover:shadow-indigo-500/30 transition-all hover:-translate-y-0.5">
-                Initialize Wallet
-            </button>
         </form>
     </div>
 </div>
 
-<!-- Modal: Edit Wallet -->
-<div id="editWalletModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
-    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeEditModal()"></div>
-    
-    <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 relative z-10 shadow-2xl shadow-indigo-500/10 border border-slate-100 transform scale-95 opacity-0 transition-all duration-200" id="editWalletModalContent">
-        <button onclick="closeEditModal()" class="absolute top-6 right-6 p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-colors">
-            <x-icon name="x" class="w-5 h-5" />
-        </button>
-
-        <div class="mb-6">
-            <h2 class="text-xl font-black text-slate-900">Edit Wallet</h2>
-            <p class="text-sm font-medium text-slate-500 mt-0.5">Update wallet name or correct the balance</p>
+<!-- Edit Wallet Modal -->
+<div id="editModal" class="modal-overlay" onclick="if(event.target===this)closeEditModal()">
+    <div class="modal-box" id="editModalBox">
+        <div class="modal-header">
+            <div><div class="modal-title">Edit Wallet</div><div class="modal-subtitle">Update wallet details</div></div>
+            <button class="modal-close" onclick="closeEditModal()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg></button>
         </div>
-        
-        <form id="editWalletForm" method="POST" class="space-y-4">
-            @csrf
-            @method('PUT')
-            <div>
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 ml-1">Wallet Name</label>
-                <input type="text" name="name" id="editWalletName" required
-                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none">
+        <form id="editWalletForm" method="POST">
+            @csrf @method('PUT')
+            <div style="display:flex;flex-direction:column;gap:14px;">
+                <div><label class="input-label">Wallet Name</label><input type="text" name="name" id="editName" required class="input-field"></div>
+                <div>
+                    <label class="input-label">Balance (IDR)</label>
+                    <input type="number" name="balance" id="editBalance" required class="input-field">
+                    <div style="margin-top:7px;padding:9px 12px;background:var(--warn-dim);border:1px solid rgba(245,158,11,0.2);border-radius:8px;font-size:12px;color:#d97706;">
+                        ⚠ Direct balance changes won't affect transaction history
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:12px;">Save Changes</button>
             </div>
-
-            <div>
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 ml-1">Balance (IDR)</label>
-                <input type="number" name="balance" id="editWalletBalance" required
-                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none font-bold">
-                <p class="text-xs text-amber-600 mt-1.5 ml-1">⚠️ Mengubah balance langsung tidak mempengaruhi riwayat transaksi.</p>
-            </div>
-
-            <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-slate-700 to-slate-900 text-white font-bold rounded-xl mt-2 hover:shadow-lg transition-all hover:-translate-y-0.5">
-                Save Changes
-            </button>
         </form>
     </div>
 </div>
 
 @push('scripts')
 <script>
-    // --- Create Wallet Modal ---
-    const wModal = document.getElementById('walletModal');
-    const wModalContent = document.getElementById('walletModalContent');
-    
-    function openWalletModal() {
-        wModal.classList.remove('hidden');
-        wModal.classList.add('flex');
-        document.body.classList.add('overflow-hidden');
-        setTimeout(() => {
-            wModalContent.classList.remove('scale-95', 'opacity-0');
-            wModalContent.classList.add('scale-100', 'opacity-100');
-        }, 10);
+    function openCreateModal() {
+        document.getElementById('createModal').classList.add('open');
+        setTimeout(() => document.getElementById('createModalBox').classList.add('open'), 10);
+        document.body.style.overflow = 'hidden';
     }
-    
-    function closeWalletModal() {
-        wModalContent.classList.remove('scale-100', 'opacity-100');
-        wModalContent.classList.add('scale-95', 'opacity-0');
-        setTimeout(() => {
-            wModal.classList.add('hidden');
-            wModal.classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
-        }, 200);
+    function closeCreateModal() {
+        document.getElementById('createModalBox').classList.remove('open');
+        setTimeout(() => { document.getElementById('createModal').classList.remove('open'); document.body.style.overflow = ''; }, 250);
     }
-
-    // --- Edit Wallet Modal ---
-    const eModal = document.getElementById('editWalletModal');
-    const eModalContent = document.getElementById('editWalletModalContent');
-
     function openEditModal(id, name, balance) {
         document.getElementById('editWalletForm').action = `/wallets/${id}`;
-        document.getElementById('editWalletName').value = name;
-        document.getElementById('editWalletBalance').value = balance;
-
-        eModal.classList.remove('hidden');
-        eModal.classList.add('flex');
-        document.body.classList.add('overflow-hidden');
-        setTimeout(() => {
-            eModalContent.classList.remove('scale-95', 'opacity-0');
-            eModalContent.classList.add('scale-100', 'opacity-100');
-        }, 10);
+        document.getElementById('editName').value = name;
+        document.getElementById('editBalance').value = balance;
+        document.getElementById('editModal').classList.add('open');
+        setTimeout(() => document.getElementById('editModalBox').classList.add('open'), 10);
+        document.body.style.overflow = 'hidden';
     }
-
     function closeEditModal() {
-        eModalContent.classList.remove('scale-100', 'opacity-100');
-        eModalContent.classList.add('scale-95', 'opacity-0');
-        setTimeout(() => {
-            eModal.classList.add('hidden');
-            eModal.classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
-        }, 200);
+        document.getElementById('editModalBox').classList.remove('open');
+        setTimeout(() => { document.getElementById('editModal').classList.remove('open'); document.body.style.overflow = ''; }, 250);
     }
 </script>
 @endpush

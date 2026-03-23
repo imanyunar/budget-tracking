@@ -1,111 +1,135 @@
 @extends('layouts.app')
 
-@section('title', $portfolio->name . ' Details - FinanceTracker')
+@section('title', $portfolio->name . ' · FinanceTracker')
 
 @section('content')
-<div class="space-y-6 animate-fade-in-up">
+<style>
+    .detail-table { width:100%; border-collapse:collapse; }
+    .detail-table th {
+        font-size:11px; font-weight:700; letter-spacing:0.07em; text-transform:uppercase;
+        color:var(--muted); padding:10px 16px; border-bottom:1px solid var(--border);
+        text-align:left; background:var(--surface-2);
+    }
+    .detail-table td { padding:12px 16px; border-bottom:1px solid var(--border); font-size:13.5px; color:var(--text-2); vertical-align:middle; }
+    .detail-table tbody tr { transition:background 0.12s; }
+    .detail-table tbody tr:hover { background:var(--surface-2); }
+    .detail-table tbody tr:last-child td { border-bottom:none; }
+    .mobile-tx-card { display:flex; align-items:center; gap:12px; padding:13px 16px; border-bottom:1px solid var(--border); }
+    .mobile-tx-card:last-child { border-bottom:none; }
+    .del-btn { width:30px; height:30px; border-radius:7px; background:transparent; border:1px solid transparent; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all 0.15s; }
+    .del-btn:hover { background:var(--danger-dim); border-color:rgba(244,63,94,0.2); color:var(--danger); }
+    @media(max-width:768px) { .desktop-view { display:none !important; } }
+    @media(min-width:769px) { .mobile-view { display:none !important; } }
+</style>
+
+<div style="display:flex;flex-direction:column;gap:20px;">
 
     <!-- Header -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div class="flex items-center gap-4">
-            <a href="{{ route('wallets.index') }}" class="p-2 bg-white border border-slate-200 rounded-xl text-slate-500 hover:bg-slate-50 transition-colors">
-                <x-icon name="arrow-left" class="w-5 h-5" />
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+            <a href="{{ route('wallets.index') }}" class="btn-secondary" style="padding:9px 12px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
             </a>
             <div>
-                <h1 class="text-2xl font-black text-slate-900 tracking-tight">{{ $portfolio->name }}</h1>
-                <p class="text-sm text-slate-500 font-medium">Wallet transaction history</p>
+                <h1 style="font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.03em;">{{ $portfolio->name }}</h1>
+                <p style="font-size:12px;color:var(--muted);margin-top:3px;">Transaction history</p>
             </div>
         </div>
-        <div class="bg-emerald-50 border border-emerald-100 px-5 py-2.5 rounded-xl">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-600 mb-0.5">Current Balance</p>
-            <h3 class="text-xl font-black text-emerald-700">IDR {{ number_format($portfolio->balance, 0, ',', '.') }}</h3>
+        <div style="padding:14px 20px;background:var(--success-dim);border:1px solid rgba(16,185,129,0.2);border-radius:12px;">
+            <div style="font-size:11px;font-weight:700;color:var(--success);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px;">Current Balance</div>
+            <div style="font-size:20px;font-weight:800;color:var(--success);letter-spacing:-0.03em;">IDR {{ number_format($portfolio->balance, 0, ',', '.') }}</div>
         </div>
     </div>
 
-    <!-- Transactions List -->
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
-        <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-            <h3 class="font-bold text-slate-800">History</h3>
+    <!-- Transaction List -->
+    <div class="card">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:14px;font-weight:700;color:var(--text);">Transactions</div>
+            <div style="font-size:12.5px;color:var(--muted);">{{ $transactions->total() }} records</div>
         </div>
 
         @if($transactions->isEmpty())
-            <div class="p-8 text-center text-slate-500 text-sm font-medium">No transactions found in this wallet.</div>
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);"><path d="M16 3h5v5"/><path d="M8 21H3v-5"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
+            </div>
+            <div class="empty-state-title">No transactions yet</div>
+            <div class="empty-state-text">Transactions recorded in this wallet will appear here</div>
+        </div>
         @else
-            <!-- Mobile View (Cards) -->
-            <div class="block md:hidden divide-y divide-slate-100">
-                @foreach($transactions as $tx)
-                <div class="p-4 flex justify-between items-start gap-4 hover:bg-slate-50">
-                    <div class="flex items-start gap-3">
-                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background-color: {{ $tx->category->color }}15; color: {{ $tx->category->color }}">
-                            <x-icon name="{{ $tx->category->icon }}" class="w-5 h-5" />
-                        </div>
-                        <div>
-                            <p class="text-sm font-black text-slate-900 leading-tight">{{ $tx->description ?: $tx->category->name }}</p>
-                            <p class="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wider">{{ $tx->date->format('M d, Y') }}</p>
-                        </div>
-                    </div>
-                    <div class="text-right shrink-0">
-                        <p class="text-sm font-black {{ $tx->type === 'income' ? 'text-emerald-500' : 'text-slate-900' }}">
-                            {{ $tx->type === 'income' ? '+' : '-' }}{{ number_format($tx->amount, 0, ',', '.') }}
-                        </p>
-                        <form action="{{ route('transactions.destroy', $tx) }}" method="POST" onsubmit="return confirm('Delete this transaction? This will impact your wallet balance.')" class="mt-1 inline-block">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-[10px] font-bold text-rose-500 hover:underline">Delete</button>
-                        </form>
-                    </div>
-                </div>
-                @endforeach
-            </div>
 
-            <!-- Desktop View (Table) -->
-            <div class="hidden md:block overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-white">
-                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">Date</th>
-                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">Category</th>
-                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">Description</th>
-                            <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 text-right">Amount</th>
-                            <th class="px-6 py-4 border-b border-slate-100"></th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        @foreach($transactions as $tx)
-                        <tr class="hover:bg-slate-50 transition-colors group">
-                            <td class="px-6 py-4 text-sm font-bold text-slate-600">{{ $tx->date->format('M d, Y') }}</td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-6 h-6 rounded flex items-center justify-center shrink-0" style="background-color: {{ $tx->category->color }}15; color: {{ $tx->category->color }}">
-                                        <x-icon name="{{ $tx->category->icon }}" class="w-3 h-3" />
-                                    </div>
-                                    <span class="text-xs font-bold text-slate-700">{{ $tx->category->name }}</span>
+        <!-- Desktop Table -->
+        <div class="desktop-view" style="overflow-x:auto;">
+            <table class="detail-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th style="text-align:right;">Amount</th>
+                        <th style="width:48px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($transactions as $tx)
+                    <tr>
+                        <td><span style="font-size:12.5px;color:var(--muted);">{{ $tx->date->format('d M Y') }}</span></td>
+                        <td><div style="font-size:13.5px;font-weight:500;color:var(--text);">{{ $tx->description ?: $tx->category->name }}</div></td>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:7px;">
+                                <div style="width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:{{ $tx->category->color }}15;border:1px solid {{ $tx->category->color }}28;flex-shrink:0;">
+                                    <x-icon name="{{ $tx->category->icon }}" style="width:12px;height:12px;color:{{ $tx->category->color }}" />
                                 </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm font-medium text-slate-800">{{ $tx->description ?: '-' }}</td>
-                            <td class="px-6 py-4 text-right">
-                                <span class="text-sm font-black {{ $tx->type === 'income' ? 'text-emerald-500' : 'text-slate-900' }}">
-                                    {{ $tx->type === 'income' ? '+' : '-' }}{{ number_format($tx->amount, 0, ',', '.') }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <form action="{{ route('transactions.destroy', $tx) }}" method="POST" onsubmit="return confirm('Delete this transaction? This will impact your wallet balance.')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all">
-                                        <x-icon name="trash-2" class="w-4 h-4" />
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                <span style="font-size:12.5px;color:var(--text-2);">{{ $tx->category->name }}</span>
+                            </div>
+                        </td>
+                        <td style="text-align:right;">
+                            <span style="font-size:14px;font-weight:700;color:{{ $tx->type === 'income' ? 'var(--success)' : 'var(--danger)' }};">
+                                {{ $tx->type === 'income' ? '+' : '-' }}{{ number_format($tx->amount, 0, ',', '.') }}
+                            </span>
+                        </td>
+                        <td style="text-align:right;">
+                            <form action="{{ route('transactions.destroy', $tx) }}" method="POST" onsubmit="return confirm('Delete? This will affect wallet balance.')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="del-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mobile Cards -->
+        <div class="mobile-view">
+            @foreach($transactions as $tx)
+            <div class="mobile-tx-card">
+                <div style="width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:{{ $tx->category->color }}15;border:1px solid {{ $tx->category->color }}28;">
+                    <x-icon name="{{ $tx->category->icon }}" style="width:16px;height:16px;color:{{ $tx->category->color }}" />
+                </div>
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:13.5px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $tx->description ?: $tx->category->name }}</div>
+                    <div style="font-size:11.5px;color:var(--muted);margin-top:2px;">{{ $tx->date->format('d M Y') }}</div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <div style="font-size:13.5px;font-weight:700;color:{{ $tx->type === 'income' ? 'var(--success)' : 'var(--danger)' }};">
+                        {{ $tx->type === 'income' ? '+' : '-' }}{{ number_format($tx->amount, 0, ',', '.') }}
+                    </div>
+                    <form action="{{ route('transactions.destroy', $tx) }}" method="POST" onsubmit="return confirm('Delete?')" style="display:inline;">
+                        @csrf @method('DELETE')
+                        <button type="submit" style="background:none;border:none;font-size:11.5px;color:var(--danger);cursor:pointer;padding:0;margin-top:2px;">Del</button>
+                    </form>
+                </div>
             </div>
-            
-            <div class="p-4 border-t border-slate-100">
-                {{ $transactions->links() }}
-            </div>
+            @endforeach
+        </div>
+
+        <!-- Pagination -->
+        <div style="padding:14px 18px;border-top:1px solid var(--border);">
+            {{ $transactions->links() }}
+        </div>
         @endif
     </div>
 </div>
